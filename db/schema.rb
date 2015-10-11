@@ -11,7 +11,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008140700) do
+ActiveRecord::Schema.define(version: 20151010234846) do
+
+  create_table "caracteristicas", force: :cascade do |t|
+    t.string   "nombre",      null: false
+    t.string   "valor",       null: false
+    t.integer  "producto_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "caracteristicas", ["producto_id"], name: "index_caracteristicas_on_producto_id"
+
+  create_table "imagenes", force: :cascade do |t|
+    t.string   "public_id",   null: false
+    t.integer  "producto_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "imagenes", ["producto_id"], name: "index_imagenes_on_producto_id"
+
+  create_table "precios", force: :cascade do |t|
+    t.integer  "cantidad_minima", null: false
+    t.integer  "precio",          null: false
+    t.integer  "producto_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "precios", ["producto_id"], name: "index_precios_on_producto_id"
+
+  create_table "productos", force: :cascade do |t|
+    t.string   "nombre",      null: false
+    t.text     "descripcion"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "usuarios", force: :cascade do |t|
     t.string   "provider",                            null: false

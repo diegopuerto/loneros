@@ -1,0 +1,111 @@
+require 'rails_helper'
+
+RSpec.describe "Precios", type: :request do
+
+	before :each do
+    	@cabeceras_peticion = {
+      		"Accept": "application/json",
+      		"Content-Type": "application/json"
+    	}
+    	@producto1 = FactoryGirl.create :producto1
+    	@precio1 = FactoryGirl.create :precio1
+  	end
+  
+	# index
+  	describe "GET /productos/:producto_id/precios" do
+    	it "Devuelve todos los precios del producto con id :producto_id" do
+      		producto1 = FactoryGirl.create :producto1,
+        	precios: [FactoryGirl.create(:precio1),
+				      FactoryGirl.create(:precio2)]
+
+      		price = FactoryGirl.create :precio
+
+      		get "/productos/#{producto1.id}/precios", {}, { "Accept" => "application/json" }
+
+      		expect(response.status).to eq 200 # OK
+
+      		body = JSON.parse(response.body)
+      		precios = body['precios']
+
+      		precios_precio = precios.map { |m| m["precio"] }
+      		cantidades_minimas_precio = precios.map { |m| m["cantidad_minima"] }
+
+      		expect(precios_precio).to match_array([1000, 2000 ])
+      		expect(cantidades_minimas_precio).to match_array([4, 10])
+    end
+  end
+
+	# create
+  	describe "POST /productos/:producto_id/precios" do
+    	it "Agrega un precio al producto con id :producto_id" do
+      		producto1 = FactoryGirl.create :producto1
+      		precio1 = FactoryGirl.create :precio1
+
+      		expect(producto1.precios).not_to include(precio1)
+
+      		parametros_precio = {
+        	"precio_id": precio1.id
+      		}.to_json
+
+      		cabeceras_peticion = {
+        	"Accept" => "application/json",
+        	"Content-Type" => "application/json"
+      		}
+
+      		post "/productos/#{producto1.id}/precios", parametros_precio, cabeceras_peticion
+
+      		expect(response.status).to eq 201 # Created
+      		expect(producto1.reload.precios).to include(precio1)
+    	end
+  	end
+
+	# destroy
+  	describe "DELETE /productos/:producto_id/precios/:id" do
+    	it "Quita el precio identificado con :id del producto con id :producto_id" do
+      		producto1 = FactoryGirl.create :producto1
+      		precio1 = FactoryGirl.create :precio1
+
+	    	producto1.precios << precio1
+
+      		expect(producto1.reload.precios).to include(precio1)
+
+      		delete "/productos/#{producto1.id}/precios/#{precio1.id}", {}, { "Accept" => "application/json" }
+
+      		expect(response.status).to be 204 # No Content
+      		expect(producto1.reload.precios.empty?).to be true
+      		expect(Precio.exists?(precio1.id)).to be false
+    	end
+  	end
+
+  	#update
+  	describe "PUT /productos/:producto_id/precios/:id" do
+  		it "Actualiza el precio identificado con :id del producto con id :producto_id" do
+  			precio1 = FactoryGirl.create :precio1
+  			producto1 = FactoryGirl.create :producto1
+
+  			producto1.precios << precio1
+
+  			expect(producto1.reload.precios).to include(precio1)
+
+  			parametros_precio = {
+        		"precio" => 35000,
+        		"cantidad_minima" => 20,
+      		}.to_json
+
+      		cabeceras_peticion = {
+        	"Accept" => "application/json",
+        	"Content-Type" => "application/json"
+      		}
+
+      		put "/productos/#{producto1.id}/precios/#{precio1.id}", parametros_precio, cabeceras_peticion
+      		expect(response.status).to be 204 # No Content
+
+      		expect(producto1.reload.precios.find(precio1.id).precio).to eq 35000
+      		expect(producto1.reload.precios.find(precio1.id).cantidad_minima).to eq 20
+  		end
+  	end
+
+end
+
+
+
