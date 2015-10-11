@@ -23,4 +23,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.singular(/ces$/, 'z')
 
   inflect.irregular('el', 'los')
+
+  inflect.irregular 'categoria_producto', 'categorias_productos'
+  inflect.irregular 'CategoriaProducto', 'CategoriasProductos'
 end

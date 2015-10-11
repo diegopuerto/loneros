@@ -1,9 +1,16 @@
 describe "Productos API" do
 
+	before :each do
+    @cabeceras_peticion = {
+      	"Accept": "application/json",
+      	 "Content-Type": "application/json"
+    }
+   	@producto1 = FactoryGirl.create :producto1
+  end
+
 	# index
 	describe "GET /productos" do
 		it "Devuelve todos los productos" do 
-			producto1 = FactoryGirl.create :producto1
 			producto2 = FactoryGirl.create :producto2
 
 			get "/productos", {}, {"Accept" => "application/json"}
@@ -24,9 +31,8 @@ describe "Productos API" do
 	# show
 	describe "GET /productos/:id" do
 		it "Devuelve la informacion del producto con id :id" do
-			producto1 = FactoryGirl.create :producto1
 
-			get "/productos/#{producto1.id}", {}, { "Accept" => "application/json" }
+			get "/productos/#{@producto1.id}", {}, { "Accept" => "application/json" }
 			expect(response.status).to eq 200 #OK
 			body = JSON.parse(response.body)
 			producto = body['producto']
@@ -38,9 +44,8 @@ describe "Productos API" do
 	# destroy
 	describe "DELETE /productos/:id" do
 		it "Elimina el producto con id :id" do
-			producto1 = FactoryGirl.create :producto1
 
-			delete "/productos/#{producto1.id}", {}, {"Accept" => "application/json"}
+			delete "/productos/#{@producto1.id}", {}, {"Accept" => "application/json"}
 			
 			expect(response.status).to be 204 # No Content
       		expect(Producto.count).to eq 0
@@ -51,38 +56,26 @@ describe "Productos API" do
 	# create
 	describe "POST /productos" do
 		it "Crea un producto" do 
-			producto1 = FactoryGirl.create :producto1
 
       		parametros_producto = FactoryGirl.attributes_for(:producto1).to_json
 
-      		cabeceras_peticion = {
-        	"Accept" => "application/json",
-        	"Content-Type" => "application/json"
-      		}
-
-      		post "/productos", parametros_producto, cabeceras_peticion
+      		post "/productos", parametros_producto, @cabeceras_peticion
       		expect(response.status).to eq 201 # Created
-      		expect(Producto.first.nombre).to eq producto1.nombre
-      		expect(Producto.first.descripcion).to eq producto1.descripcion
+      		expect(Producto.first.nombre).to eq @producto1.nombre
+      		expect(Producto.first.descripcion).to eq @producto1.descripcion
       	end
 	end
 
 	# update
 	describe "PUT /productos/:id" do
 		it "Actualiza el producto con id :id" do
-			producto1 = FactoryGirl.create :producto1 
 
 			parametros_producto = {
         	"nombre" => "otro_nombre",
         	"descripcion" => "otra_descripcion",
       		}.to_json
 
-      		cabeceras_peticion = {
-        	"Accept" => "application/json",
-        	"Content-Type" => "application/json"
-      		}
-
-      		put "/productos/#{producto1.id}", parametros_producto, cabeceras_peticion
+      		put "/productos/#{@producto1.id}", parametros_producto, @cabeceras_peticion
 
       		expect(response.status).to be 204 # No content
 

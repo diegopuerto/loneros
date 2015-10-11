@@ -22,8 +22,16 @@ Rails.application.routes.draw do
     resources :imagenes,
       except: [:edit, :new],
       defaults: { format: :json }
+	
+    resources :categorias,
+      only: [:index, :create, :destroy],
+      defaults: { categoria_producto: true }
 
    end
+
+     resources :categorias,
+       except: [:edit, :new],
+       defaults: { format: :json }
 
   root 'pruebas#index'
 end
