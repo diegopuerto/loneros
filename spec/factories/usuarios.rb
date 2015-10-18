@@ -3,7 +3,7 @@ FactoryGirl.define do
   factory :usuario_valido, class: Usuario do
     uid "usuario@correo.com"
     provider "email"
-    password "clave secreta"
+    password "clave secreta valida"
     nombre "Usuario Válido"
     email "usuario@correo.com"
     reputacion 1000
@@ -14,7 +14,7 @@ FactoryGirl.define do
   factory :usuario_uno, class: Usuario do
     uid "usuario_uno@correo.com"
     provider "email"
-    password "clave secreta"
+    password "clave secreta uno"
     nombre "Usuario Uno"
     email "usuario_uno@correo.com"
     reputacion 3000
@@ -25,7 +25,7 @@ FactoryGirl.define do
   factory :usuario_dos, class: Usuario do
     uid "usuario_dos@correo.com"
     provider "email"
-    password "clave secreta"
+    password "clave secreta dos"
     nombre "Usuario Dos"
     email "usuario_dos@correo.com"
     reputacion 30
