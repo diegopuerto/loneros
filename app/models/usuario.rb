@@ -10,4 +10,8 @@ class Usuario < ActiveRecord::Base
   validates_uniqueness_of :email
   validates :reputacion,
        numericality: { greater_than_or_equal_to: 0, only_integer: true  }
+
+  #Asociaciones
+  has_many :productos, dependent: :destroy
+
 end

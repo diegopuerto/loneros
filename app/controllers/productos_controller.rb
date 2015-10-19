@@ -1,46 +1,60 @@
 class ProductosController < ApplicationController
 	before_action :establecer_producto, only: [:show, :destroy, :update]
+  before_action :establecer_usuario_producto, only: [:destroy, :update]
 
 
-# GET /productos
+  # GET /usuarios/:usuario_id/productos
+  # GET /productos
   def index
-    @productos = Producto.all
-    render json: @productos
+    if params[:usuario_producto]
+      @usuario = Usuario.find(params[:usuario_id])
+      render json: @usuario.productos
+    else
+      @productos = Producto.all
+      render json: @productos
+    end
   end
 
-# GET /productos/1
+  # GET /usuarios/:usuario_id/productos/:id
+  # GET /productos/:id
   def show
-  	@producto = Producto.find(params[:id])
-    render json: @producto
+    if params[:usuario_producto]
+      @usuario = Usuario.find(params[:usuario_id])
+      @producto = Producto.find(params[:id])
+      render json: @usuario.productos.find(@producto.id)
+    else
+  	  @producto = Producto.find(params[:id])
+      render json: @producto
+    end
   end
 
-# DELETE /productos
+  # DELETE /usuarios/:usuario_id/productos/:id
   def destroy
-  	@producto.destroy
+    @usuario.productos.destroy(@producto)
     head :no_content
   end
 
-# POST /productos
+  # POST /usuarios/:usuario_id/productos
   def create
-    @producto = Producto.new(parametros_producto)
-
-  	if @producto.save
-      render json: @producto, status: :created
+    # if params[:usuario_producto]
+    @usuario = Usuario.find(params[:usuario_id])
+    @producto = @usuario.productos.new(parametros_producto)
+    if @producto.save
+      render json: @usuario.productos, status: :created
     else
       render json: @producto.errors, status: :unprocessable_entity
     end
   end
 
-# PATCH/PUT /productos/1
+  # PATCH/PUT /usuarios/:usuario_id/productos/:id
   def update
-    if @producto.update(parametros_producto)
-		head :no_content
+    up = @usuario.productos.find(@producto.id)
+    if up.update(parametros_producto)
+      head :no_content
     else
-      render json: @producto.errors, status: :unprocessable_entity
-    end
+      render json: @usuario.productos.errors, status: :unprocessable_entity
+    end    
   end
-
-
 
 private
 	def establecer_producto
@@ -52,4 +66,8 @@ private
        	:descripcion)
   end
 
+  def establecer_usuario_producto
+    @usuario = Usuario.find(params[:usuario_id])
+    @producto = Producto.find(params[:id])
+  end
 end

@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Producto, type: :model do
   it "es valido con todos sus datos" do 
-		@producto = FactoryGirl.build(:producto)
+  		@usuario_uno = FactoryGirl.create :usuario_uno
+		@producto = FactoryGirl.build(:producto, usuario_id: @usuario_uno.id)
 		expect(@producto).to be_valid
   end
 

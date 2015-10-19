@@ -1,45 +1,44 @@
 class ImagenesController < ApplicationController
+   before_action :establecer_producto_imagen, only: [:destroy, :update]
 
-	# GET /productos/:producto_id/imagenes
-  	def index
-  		@producto = Producto.find(params[:producto_id])
-    		# Actualizar colección de productos
-    	@producto.imagenes.reload
-    	render json: @producto.imagenes
-  	end
+  # GET /usuarios/:usuario_id/productos/:producto_id/imagenes
+  def index
+  	@producto = Producto.find(params[:producto_id])
+    # Actualizar colección de productos
+    @producto.imagenes.reload
+    render json: @producto.imagenes
+  end
 
-  	# POST /productos/:producto_id/precio
-  	def create
-	    producto = Producto.find(params[:producto_id])
-      	imagen = Imagen.find(params[:imagen_id])
-
-     	if producto.imagenes << imagen
-        	render json: imagen, status: :created
-      	else
-        	render json: {:errors => {imagen: ["No se ha podido agregar imagen"]}}, status: :unprocessable_entity
-      	end
+  # POST /usuarios/:usuario_id/productos/:producto_id/imagenes
+  def create
+    producto = Producto.find(params[:producto_id])
+    imagen = producto.imagenes.new(parametros_imagen)
+    if imagen.save
+      render json: imagen, status: :created
+    else
+      render json: {:errors => {precio: ["No se ha podido agregar imagen"]}}, status: :unprocessable_entity
     end
+  end
 
-    # DELETE /productos/:producto_id/precios/:id
-  	def destroy
-      	@producto = Producto.find(params[:producto_id])
-      	@imagen = Imagen.find(params[:id])
-      	@producto.imagenes.destroy(@imagen)
-      	head :no_content
-    end
+  # DELETE /usuarios/:usuario_id/productos/:producto_id/imagenes/:id
+  def destroy
+    @producto.imagenes.destroy(@imagen)
+    head :no_content
+  end
 
-    # PATCH/PUT
-
+  # PATCH/PUT /usuarios/:usuario_id/productos/:producto_id/imagenes/:id
 	def update
-		@producto = Producto.find(params[:producto_id])
-      	@imagen = Imagen.find(params[:id])
-      	@producto.imagenes.find(@imagen.id).update(parametros_imagen)
-      	head :no_content
-    end
+    @producto.imagenes.find(@imagen.id).update(parametros_imagen)
+    head :no_content
+  end
 
 private
+  def parametros_imagen
+    params.permit(:public_id)
+  end
 
-    def parametros_imagen
-    	params.permit(:public_id)
-    end
+  def establecer_producto_imagen
+    @producto = Producto.find(params[:producto_id])
+    @imagen = Imagen.find(params[:id])
+  end
 end
