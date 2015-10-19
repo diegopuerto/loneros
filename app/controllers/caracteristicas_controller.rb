@@ -1,46 +1,46 @@
 class CaracteristicasController < ApplicationController
+  before_action :establecer_producto_caracteristica, only: [:destroy, :update]
 
-	# GET /productos/:producto_id/caracteristicas
-  	def index
-  		@producto = Producto.find(params[:producto_id])
-    		# Actualizar colección de productos
-    	@producto.caracteristicas.reload
-    	render json: @producto.caracteristicas
-  	end
+	# GET /usuarios/:usuario_id/productos/:producto_id/caracteristicas
+  def index
+  	@producto = Producto.find(params[:producto_id])
+    # Actualizar colección de productos
+    @producto.caracteristicas.reload
+    render json: @producto.caracteristicas
+  end
 
-  	# POST /productos/:producto_id/caracteristicas
-  	def create
-	    producto = Producto.find(params[:producto_id])
-      	caracteristica = Caracteristica.find(params[:caracteristica_id])
-
-     	if producto.caracteristicas << caracteristica
-        	render json: caracteristica, status: :created
-      	else
-        	render json: {:errors => {caracteristica: ["No se ha podido agregar caracteristica"]}}, status: :unprocessable_entity
-      	end
+  # POST /usuarios/:usuario_id/productos/:producto_id/caracteristicas
+  def create
+	  producto = Producto.find(params[:producto_id])
+    caracteristica = producto.caracteristicas.new(parametros_caracteristica)
+    if caracteristica.save
+      render json: caracteristica, status: :created
+    else
+      render json: {:errors => {caracteristica: ["No se ha podido agregar caracteristica"]}}, status: :unprocessable_entity
     end
+  end
 
-    # DELETE /productos/:producto_id/caracteristicas/:id
-  	def destroy
-      	@producto = Producto.find(params[:producto_id])
-      	@caracteristica = Caracteristica.find(params[:id])
-      	@producto.caracteristicas.destroy(@caracteristica)
-      	head :no_content
-    end
+  # DELETE /usuarios/:usuario_id/productos/:producto_id/caracteristicas/:id
+  def destroy
+    @producto.caracteristicas.destroy(@caracteristica)
+    head :no_content
+  end
 
-    # PATCH/PUT /productos/:producto_id/caracteristicas/:id
-
+  # PATCH/PUT /usuarios/:usuario_id/productos/:producto_id/caracteristicas/:id
 	def update
-		@producto = Producto.find(params[:producto_id])
-      	@caracteristica = Caracteristica.find(params[:id])
-      	@producto.caracteristicas.find(@caracteristica.id).update(parametros_caracteristica)
-      	head :no_content
-    end
+    @producto.caracteristicas.find(@caracteristica.id).update(parametros_caracteristica)
+    head :no_content
+  end
 
 private
-    def parametros_caracteristica
-    	params.permit(:nombre,
-       	:valor)
-    end
+  def parametros_caracteristica
+    params.permit(:nombre,
+    :valor)
+  end
+
+  def establecer_producto_caracteristica
+    @producto = Producto.find(params[:producto_id])
+    @caracteristica = Caracteristica.find(params[:id])
+  end
 end
 

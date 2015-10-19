@@ -7,85 +7,83 @@ RSpec.describe "Precios", type: :request do
       	"Accept": "application/json",
       	 "Content-Type": "application/json"
     }
-   	@producto_uno = FactoryGirl.create :producto1
+    @usuario_uno = FactoryGirl.create :usuario_uno
+   	@producto_uno = FactoryGirl.create(:producto1, usuario_id: @usuario_uno.id)
     @precio_uno = FactoryGirl.create :precio1
+    @precio_dos = FactoryGirl.create :precio2
   end
   
 	# index
-  	describe "GET /productos/:producto_id/precios" do
-    	it "Devuelve todos los precios del producto con id :producto_id" do
-      		producto1 = FactoryGirl.create :producto1,
-        	precios: [FactoryGirl.create(:precio1),
-				      FactoryGirl.create(:precio2)]
+  	describe "GET /usuarios/:usuario_id/productos/:producto_id/precios" do
+    	it "Devuelve todos los precios del producto con id :producto_id del usuario con id :usuario_id" do
+      	producto_uno = FactoryGirl.create :producto1,
+        precios: [FactoryGirl.create(:precio1),
+				          FactoryGirl.create(:precio2)], usuario_id: @usuario_uno.id
 
-      		price = FactoryGirl.create :precio
+      	get "/usuarios/#{@usuario_uno.id}/productos/#{producto_uno.id}/precios", {}, { "Accept" => "application/json" }
 
-      		get "/productos/#{producto1.id}/precios", {}, { "Accept" => "application/json" }
+      	expect(response.status).to eq 200 # OK
 
-      		expect(response.status).to eq 200 # OK
+      	body = JSON.parse(response.body)
+      	precios = body['precios']
 
-      		body = JSON.parse(response.body)
-      		precios = body['precios']
+      	precios_precio = precios.map { |m| m["precio"] }
+      	cantidades_minimas_precio = precios.map { |m| m["cantidad_minima"] }
 
-      		precios_precio = precios.map { |m| m["precio"] }
-      		cantidades_minimas_precio = precios.map { |m| m["cantidad_minima"] }
-
-      		expect(precios_precio).to match_array([1000, 2000 ])
-      		expect(cantidades_minimas_precio).to match_array([4, 10])
+      	expect(precios_precio).to match_array([@precio_uno.precio, @precio_dos.precio])
+      	expect(cantidades_minimas_precio).to match_array([@precio_uno.cantidad_minima, @precio_dos.cantidad_minima])
     end
   end
 
 	# create
-  	describe "POST /productos/:producto_id/precios" do
-    	it "Agrega un precio al producto con id :producto_id" do
-      		expect(@producto_uno.precios).not_to include(@precio_uno)
+  	describe "POST /usuarios/:usuario_id/productos/:producto_id/precios" do
+    	it "Agrega un precio al producto con id :producto_id del usuario con id :usuario_id" do
+      	expect(@producto_uno.precios).not_to include(@precio_uno)
 
-      		parametros_precio = {
-        	"precio_id": @precio_uno.id
-      		}.to_json
+      	parametros_precio = {
+        "precio": @precio_uno.precio,
+        "cantidad_minima": @precio_uno.cantidad_minima
+      	}.to_json
 
-      		post "/productos/#{@producto_uno.id}/precios", parametros_precio, @cabeceras_peticion
+      	post "/usuarios/#{@usuario_uno.id}/productos/#{@producto_uno.id}/precios", parametros_precio, @cabeceras_peticion
 
-      		expect(response.status).to eq 201 # Created
-      		expect(@producto_uno.reload.precios).to include(@precio_uno)
+      	expect(response.status).to eq 201 # Created
+      	expect(@producto_uno.reload.precios.first.precio).to eq @precio_uno.precio
+        expect(@producto_uno.reload.precios.first.cantidad_minima).to eq @precio_uno.cantidad_minima
     	end
   	end
 
 	# destroy
-  	describe "DELETE /productos/:producto_id/precios/:id" do
-    	it "Quita el precio identificado con :id del producto con id :producto_id" do
+  	describe "DELETE /usuarios/:usuario_id/productos/:producto_id/precios/:id" do
+    	it "Quita el precio identificado con id :id del producto con id :producto_id del usuario con id :usuario_id" do
 	    	@producto_uno.precios << @precio_uno
 
-      		expect(@producto_uno.reload.precios).to include(@precio_uno)
+      	expect(@producto_uno.reload.precios).to include(@precio_uno)
 
-      		delete "/productos/#{@producto_uno.id}/precios/#{@precio_uno.id}", {}, { "Accept" => "application/json" }
+      	delete "/usuarios/#{@usuario_uno.id}/productos/#{@producto_uno.id}/precios/#{@precio_uno.id}", {}, { "Accept" => "application/json" }
 
-      		expect(response.status).to be 204 # No Content
-      		expect(@producto_uno.reload.precios.empty?).to be true
-      		expect(Precio.exists?(@precio_uno.id)).to be false
+      	expect(response.status).to be 204 # No Content
+      	expect(@producto_uno.reload.precios.empty?).to be true
+      	expect(Precio.exists?(@precio_uno.id)).to be false
     	end
   	end
 
   	#update
-  	describe "PUT /productos/:producto_id/precios/:id" do
-  		it "Actualiza el precio identificado con :id del producto con id :producto_id" do
+  	describe "PUT /usuarios/:usuario_id/productos/:producto_id/precios/:id" do
+  		it "Actualiza el precio identificado con id :id del producto con id :producto_id del usuario con id :usuario_id" do
   			@producto_uno.precios << @precio_uno
 
   			expect(@producto_uno.reload.precios).to include(@precio_uno)
 
-  			parametros_precio = {
-        		"precio" => 35000,
-        		"cantidad_minima" => 20,
-      		}.to_json
+        parametros_precio = FactoryGirl.attributes_for(:precio2).to_json
 
-      		put "/productos/#{@producto_uno.id}/precios/#{@precio_uno.id}", parametros_precio, @cabeceras_peticion
-      		expect(response.status).to be 204 # No Content
+      	put "/usuarios/#{@usuario_uno.id}/productos/#{@producto_uno.id}/precios/#{@precio_uno.id}", parametros_precio, @cabeceras_peticion
+      	expect(response.status).to be 204 # No Content
 
-      		expect(@producto_uno.reload.precios.find(@precio_uno.id).precio).to eq 35000
-      		expect(@producto_uno.reload.precios.find(@precio_uno.id).cantidad_minima).to eq 20
+      	expect(@producto_uno.reload.precios.first.precio).to eq @precio_dos.precio
+      	expect(@producto_uno.reload.precios.first.cantidad_minima).to eq @precio_dos.cantidad_minima
   		end
   	end
-
 end
 
 
