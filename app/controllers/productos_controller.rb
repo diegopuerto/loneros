@@ -38,7 +38,12 @@ class ProductosController < ApplicationController
   def create
     # if params[:usuario_producto]
     @usuario = Usuario.find(params[:usuario_id])
-    @producto = @usuario.productos.new(parametros_producto)
+    @producto = @usuario.productos.new(parametros_producto_crear)
+    @categorias = []
+    params[:categorias].each do |c|
+      @categorias << Categoria.find_by(nombre: c[:nombre])
+    end
+    @producto.categorias << @categorias
     if @producto.save
       render json: @usuario.productos, status: :created
     else
@@ -49,7 +54,7 @@ class ProductosController < ApplicationController
   # PATCH/PUT /usuarios/:usuario_id/productos/:id
   def update
     up = @usuario.productos.find(@producto.id)
-    if up.update(parametros_producto)
+    if up.update(parametros_producto_actualizar)
       head :no_content
     else
       render json: @usuario.productos.errors, status: :unprocessable_entity
@@ -61,9 +66,20 @@ private
   		@producto = Producto.find(params[:id])
 	end
 
-	def parametros_producto
+	def parametros_producto_crear
     	params.permit(:nombre,
-       	:descripcion)
+       	:descripcion,
+        precios_attributes: [:precio, :cantidad_minima],
+        caracteristicas_attributes: [:nombre, :valor],
+        imagenes_attributes: [:public_id])
+  end
+
+  def parametros_producto_actualizar
+      params.permit(:nombre,
+        :descripcion,
+        precios_attributes: [:id, :precio, :cantidad_minima],
+        caracteristicas_attributes: [:id, :nombre, :valor],
+        imagenes_attributes: [:id, :public_id])
   end
 
   def establecer_usuario_producto
