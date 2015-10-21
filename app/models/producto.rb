@@ -4,13 +4,16 @@ class Producto < ActiveRecord::Base
 	has_many :caracteristicas, dependent: :destroy
 	has_many :imagenes, dependent: :destroy
 	has_many :categorias_productos
-        has_many :categorias, through: :categorias_productos, dependent: :destroy
+    has_many :categorias, through: :categorias_productos, dependent: :destroy
 	belongs_to :usuario
 
+	# nested attributes
+	accepts_nested_attributes_for :precios, :caracteristicas, :imagenes
+	
 	#Validaciones
 	validates_presence_of :nombre
 	validates_presence_of :descripcion
-        validates_presence_of :usuario
+    validates_presence_of :usuario
 
 	validates :nombre, length: { maximum: 100 }
 	validates :descripcion, length: { maximum: 1000 }

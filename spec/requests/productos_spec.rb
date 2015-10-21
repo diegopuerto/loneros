@@ -8,7 +8,8 @@ describe "Productos API" do
     	@usuario_uno = FactoryGirl.create :usuario_uno
    		@producto_uno = FactoryGirl.create(:producto1, usuario_id: @usuario_uno.id)
    		@producto_dos = FactoryGirl.create(:producto2, usuario_id: @usuario_uno.id)
-   		
+   		@categoria_uno = FactoryGirl.create :categoria_uno
+   		@categoria_dos = FactoryGirl.create :categoria_dos
   	end
 
 	# index
@@ -103,14 +104,25 @@ describe "Productos API" do
 	describe "POST /usuarios/:usuario_id/productos" do
 		it "Crea un producto al usuario con id :usuario_id" do 
 
-      		parametros_producto = FactoryGirl.attributes_for(:producto1).to_json
+      		parametros_producto = {nombre: "producto_prueba", descripcion: "descripcion_prueba", 
+      			precios_attributes: [{cantidad_minima: 3, precio: 400}, {cantidad_minima: 4, precio: 500}], 
+      			caracteristicas_attributes: [{nombre: "caracteristica_prueba", valor: "caracteristica_valor"}],
+      			imagenes_attributes: [{ public_id: "public_id_prueba"}], 
+      			categorias: [{ nombre: @categoria_uno.nombre}, { nombre: @categoria_dos.nombre}]}.to_json
 
       		post "/usuarios/#{@usuario_uno.id}/productos", parametros_producto, @cabeceras_peticion
 
       		expect(response.status).to eq 201 # Created
-      		expect(@usuario_uno.productos).to include @producto_uno
-      		expect(@usuario_uno.productos.first.nombre).to eq @producto_uno.nombre
-      		expect(@usuario_uno.productos.first.descripcion).to eq @producto_uno.descripcion
+      		expect(@usuario_uno.productos.last.nombre).to eq "producto_prueba"
+      		expect(@usuario_uno.productos.last.descripcion).to eq "descripcion_prueba"
+      		expect(@usuario_uno.productos.last.precios.first.precio).to eq 400
+      		expect(@usuario_uno.productos.last.precios.first.cantidad_minima).to eq 3
+      		expect(@usuario_uno.productos.last.precios.last.precio).to eq 500
+      		expect(@usuario_uno.productos.last.precios.last.cantidad_minima).to eq 4
+      	    expect(@usuario_uno.productos.last.caracteristicas.first.nombre).to eq "caracteristica_prueba"
+      		expect(@usuario_uno.productos.last.caracteristicas.first.valor).to eq "caracteristica_valor"
+      		expect(@usuario_uno.productos.last.imagenes.first.public_id).to eq "public_id_prueba"
+      		expect(@usuario_uno.productos.last.categorias).to match_array [@categoria_uno, @categoria_dos]
       	end
 	end
 
@@ -118,9 +130,21 @@ describe "Productos API" do
 	describe "PUT /productos/:usuario_id/productos/:id" do
 		it "Actualiza el producto con id :id del usuario con id :usuario_id" do
 
-			parametros_producto = FactoryGirl.attributes_for(:producto2).to_json
+			caracteristica_uno = FactoryGirl.create :caracteristica_uno
+			caracteristica_dos = FactoryGirl.create :caracteristica_dos
+			precio_uno = FactoryGirl.create :precio1
+			precio_dos = FactoryGirl.create :precio2
+			imagen_uno = FactoryGirl.create :imagen_uno
+			imagen_dos = FactoryGirl.create :imagen_dos
 
-      		@usuario_uno.productos << @producto_uno
+			@producto_uno.caracteristicas << [caracteristica_uno, caracteristica_dos]
+			@producto_uno.precios << [precio_uno, precio_dos]
+			@producto_uno.imagenes << [imagen_uno, imagen_dos]
+
+			parametros_producto = {nombre: @producto_dos.nombre, descripcion: @producto_dos.descripcion, 
+      			precios_attributes: [{id: 2, cantidad_minima: 20, precio: 50000}], 
+      			caracteristicas_attributes: [{ id: 1, nombre: "otra_caracteristica", valor: "otro_valor_caracteristica"}],
+      			imagenes_attributes: [{ id: 2, public_id: "otro_public_id"}]}.to_json
 
       		put "/usuarios/#{@usuario_uno.id}/productos/#{@producto_uno.id}", parametros_producto, @cabeceras_peticion
 
@@ -128,6 +152,11 @@ describe "Productos API" do
 
       		expect(@usuario_uno.productos.first.nombre).to eq @producto_dos.nombre
       		expect(@usuario_uno.productos.first.descripcion).to eq @producto_dos.descripcion
+      		expect(@usuario_uno.productos.first.precios.find(2).precio).to eq 50000
+      		expect(@usuario_uno.productos.first.precios.find(2).cantidad_minima).to eq 20
+      		expect(@usuario_uno.productos.first.caracteristicas.find(1).nombre).to eq "otra_caracteristica"
+      		expect(@usuario_uno.productos.first.caracteristicas.find(1).valor).to eq "otro_valor_caracteristica"
+      		expect(@usuario_uno.productos.first.imagenes.find(2).public_id).to eq "otro_public_id"
       	end	
 	end
 
