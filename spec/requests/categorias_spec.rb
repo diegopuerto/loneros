@@ -8,77 +8,106 @@ RSpec.describe "Categorias", type: :request do
       	 "Content-Type": "application/json"
     }
    	@categoria_uno = FactoryGirl.create :categoria_uno
-
+   	@usuario_uno = FactoryGirl.create :usuario_uno
+   	@admin = FactoryGirl.create :admin
   	end
 
   # index
 	describe "GET /categorias" do
-		it "Devuelve todos las categorias" do 
-
+		before :each do
 			@categoria_dos = FactoryGirl.create :categoria_dos
+		end
 
-			get "/categorias", {}, {"Accept" => "application/json"}
+		context "usuario autenticado administrador" do
+			it "Devuelve todos las categorias" do 
 
-			expect(response.status).to eq 200 #OK
+				@cabeceras_peticion.merge! @admin.create_new_auth_token
 
-			body = JSON.parse(response.body)
-			categorias = body['categorias']
+				get "/categorias", {}, @cabeceras_peticion
 
-			nombres_categoria = categorias.map { |m| m["nombre"] }
+				expect(response.status).to eq 200 #OK
+
+				body = JSON.parse(response.body)
+				categorias = body['categorias']
+
+				nombres_categoria = categorias.map { |m| m["nombre"] }
  
-      		expect(nombres_categoria).to match_array(["categoria_uno", "categoria_dos" ])
-
+      			expect(nombres_categoria).to match_array(["categoria_uno", "categoria_dos" ])
+			end
 		end
 	end
 
 	# show
 	describe "GET /categorias/:id" do
-		it "Devuelve la informacion de la categoria con id :id" do
+		
+		context "usuario autenticado administrador" do
+			it "Devuelve la informacion de la categoria con id :id" do
 
-			get "/categorias/#{@categoria_uno.id}", {}, { "Accept" => "application/json" }
-			expect(response.status).to eq 200 #OK
-			body = JSON.parse(response.body)
-			categoria = body['categoria']
-			expect(categoria["nombre"]).to eq "categoria_uno"
-      	end
+				@cabeceras_peticion.merge! @admin.create_new_auth_token
+
+				get "/categorias/#{@categoria_uno.id}", {}, @cabeceras_peticion
+				expect(response.status).to eq 200 #OK
+				body = JSON.parse(response.body)
+				categoria = body['categoria']
+				expect(categoria["nombre"]).to eq "categoria_uno"
+      		end
+		end
 	end
 
 	# destroy
 	describe "DELETE /categorias/:id" do
-		it "Elimina la categoria con id :id" do
+		
+		context "usuario autenticado administrador" do
+			it "permite eliminar la categoria con id :id" do
 
-			delete "/categorias/#{@categoria_uno.id}", {}, {"Accept" => "application/json"}
+				@cabeceras_peticion.merge! @admin.create_new_auth_token
+
+				delete "/categorias/#{@categoria_uno.id}", {}, @cabeceras_peticion
 			
-			expect(response.status).to be 204 # No Content
-      		expect(Categoria.count).to eq 0
-      	end
+				expect(response.status).to be 204 # No Content
+      			expect(Categoria.count).to eq 0
+      		end
+		end
 	end
 
 	# create
 	describe "POST /categorias" do
-		it "Crea una categoria" do 
+		before :each do
+			Categoria.delete_all
+		end
 
-      		parametros_categoria = FactoryGirl.attributes_for(:categoria_uno).to_json
+		context "usuario autenticado administrador" do
+			it "permite crear una categoria" do 
 
-      		post "/categorias", parametros_categoria, @cabeceras_peticion
-      		expect(response.status).to eq 201 # Created
-      		expect(Categoria.first.nombre).to eq @categoria_uno.nombre
-      	end
+      			parametros_categoria = FactoryGirl.attributes_for(:categoria_uno).to_json
+
+      			@cabeceras_peticion.merge! @admin.create_new_auth_token
+
+      			post "/categorias", parametros_categoria, @cabeceras_peticion
+      			expect(response.status).to eq 201 # Created
+      			expect(Categoria.first.nombre).to eq @categoria_uno.nombre
+      		end
+		end
 	end
 
 	# update
 	describe "PUT /categorias/:id" do
-		it "Actualiza la categoria con id :id" do
+		before :each do 
+			@categoria_dos = FactoryGirl.create :categoria_dos
+			@parametros_categoria = FactoryGirl.attributes_for(:categoria_dos).to_json
+		end
 
-			parametros_categoria = {
-        	"nombre" => "otro_nombre",
-      		}.to_json
+		context "usuario autenticado administrador" do 
+			it "permite actualizar categoria con id :id" do
 
-      		put "/categorias/#{@categoria_uno.id}", parametros_categoria, @cabeceras_peticion
+      			@cabeceras_peticion.merge! @admin.create_new_auth_token
 
-      		expect(response.status).to be 204 # No content
+      			put "/categorias/#{@categoria_uno.id}", @parametros_categoria, @cabeceras_peticion
 
-      		expect(Categoria.first.nombre).to eq "otro_nombre"
-      	end	
+      			expect(response.status).to be 204 # No content
+
+      			expect(Categoria.first.nombre).to eq @categoria_dos.nombre
+      		end	
+		end
 	end
 end

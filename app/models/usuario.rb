@@ -14,4 +14,8 @@ class Usuario < ActiveRecord::Base
   #Asociaciones
   has_many :productos, dependent: :destroy
 
+  def signed_in?
+    self.nombre != nil
+  end
+
 end

@@ -1,7 +1,7 @@
 class ProductosController < ApplicationController
 	before_action :establecer_producto, only: [:show, :destroy, :update]
   before_action :establecer_usuario_producto, only: [:destroy, :update]
-
+  authorize_resource
 
   # GET /usuarios/:usuario_id/productos
   # GET /productos
@@ -36,9 +36,9 @@ class ProductosController < ApplicationController
 
   # POST /usuarios/:usuario_id/productos
   def create
-    # if params[:usuario_producto]
     @usuario = Usuario.find(params[:usuario_id])
     @producto = @usuario.productos.new(parametros_producto_crear)
+    #@producto.categorias = params[:categorias]
     @categorias = []
     params[:categorias].each do |c|
       @categorias << Categoria.find_by(nombre: c[:nombre])
@@ -53,8 +53,17 @@ class ProductosController < ApplicationController
 
   # PATCH/PUT /usuarios/:usuario_id/productos/:id
   def update
-    up = @usuario.productos.find(@producto.id)
-    if up.update(parametros_producto_actualizar)
+    #up = @usuario.productos.find(@producto.id)
+    #@producto.categorias = params[:categorias]
+    if params[:categorias]
+      @categorias = []
+      params[:categorias].each do |c|
+        @categorias << Categoria.find_by(nombre: c[:nombre])
+      end
+      @producto.categorias.clear
+      @producto.categorias << @categorias
+    end
+    if @producto.update(parametros_producto_actualizar)
       head :no_content
     else
       render json: @usuario.productos.errors, status: :unprocessable_entity
@@ -77,9 +86,9 @@ private
   def parametros_producto_actualizar
       params.permit(:nombre,
         :descripcion,
-        precios_attributes: [:id, :precio, :cantidad_minima],
-        caracteristicas_attributes: [:id, :nombre, :valor],
-        imagenes_attributes: [:id, :public_id])
+        precios_attributes: [:id, :precio, :cantidad_minima, :_destroy],
+        caracteristicas_attributes: [:id, :nombre, :valor, :_destroy],
+        imagenes_attributes: [:id, :public_id, :_destroy])
   end
 
   def establecer_usuario_producto

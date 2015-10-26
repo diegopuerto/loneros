@@ -14,5 +14,10 @@ FactoryGirl.define do
     nombre "nombre_p2"
 	  descripcion "descripcion_p2"
   end
+
+  factory :producto_tres, class: Producto do
+    nombre "producto_tres"
+    descripcion "descripcion_producto_tres"
+  end
   
 end

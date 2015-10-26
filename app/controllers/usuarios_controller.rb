@@ -1,6 +1,7 @@
 class UsuariosController < ApplicationController
 
   before_action :establecer_usuario, only: [:show, :destroy, :update]
+  authorize_resource
 
   # GET /usuarios
   def index

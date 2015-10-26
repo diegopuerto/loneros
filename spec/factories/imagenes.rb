@@ -1,16 +1,21 @@
 FactoryGirl.define do
   factory :imagen do
     public_id "MyString"
-	producto nil
+	  producto nil
   end
 
   factory :imagen_uno, class: Imagen do
     public_id "public_id_uno"
-	producto nil
+	  producto nil
   end
 
- factory :imagen_dos, class: Imagen do
+  factory :imagen_dos, class: Imagen do
     public_id "public_id_dos"
-	producto nil
+	  producto nil
+  end
+
+  factory :imagen_tres, class: Imagen do
+    public_id "public_id_tres"
+    producto nil
   end
 end

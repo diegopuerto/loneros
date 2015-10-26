@@ -31,6 +31,18 @@ FactoryGirl.define do
     reputacion 30
     celular "3022222234"
     imagen "imagen_dos.png"
+    admin false
+  end
+
+  factory :admin, class: Usuario do
+    uid "adminpruebas@correo.com"
+    provider "email"
+    password "clavesecreta"
+    email "adminpruebas@correo.com"
+    nombre "Administrador"
+    imagen "admin.png"
+    celular "3006785432"
+    admin true
   end
 
 end
