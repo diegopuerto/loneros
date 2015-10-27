@@ -10,6 +10,7 @@ class Ability
        if user.admin?
          can :manage, :all
        elsif user.signed_in?
+          can :index, Categoria
           can :read, [Producto, Usuario]
           cannot :index, Usuario
           can :update, Producto do |producto|
