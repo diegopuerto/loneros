@@ -8,7 +8,9 @@ class Producto < ActiveRecord::Base
 	belongs_to :usuario
 
 	# nested attributes
-	accepts_nested_attributes_for :precios, :caracteristicas, :imagenes
+	accepts_nested_attributes_for :precios, allow_destroy: true
+	accepts_nested_attributes_for :caracteristicas, allow_destroy: true
+	accepts_nested_attributes_for :imagenes, allow_destroy: true
 	
 	#Validaciones
 	validates_presence_of :nombre
