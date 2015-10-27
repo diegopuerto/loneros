@@ -16,9 +16,6 @@ describe "Productos API" do
 
 	# index
 	describe "GET /usuarios/:usuario_id/productos" do
-		before :each do
-			@usuario_uno.productos << [@producto_uno, @producto_dos]
-  		end
 
   		context "usuario no autenticado" do
       		it "permite la consulta de productos del usuario con id :usuario_id" do
@@ -31,9 +28,11 @@ describe "Productos API" do
 
 				nombres_producto = productos.map { |m| m["nombre"] }
       			descripciones_producto = productos.map { |m| m["descripcion"] }
+      			referencias_producto = productos.map { |m| m["referencia"] }
 
       			expect(nombres_producto).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
       			expect(descripciones_producto).to match_array([@producto_uno.descripcion, @producto_dos.descripcion])
+      			expect(referencias_producto).to match_array([@producto_uno.referencia, @producto_dos.referencia])
       		end
     	end
 
@@ -51,9 +50,11 @@ describe "Productos API" do
 
 				nombres_producto = productos.map { |m| m["nombre"] }
       			descripciones_producto = productos.map { |m| m["descripcion"] }
+      			referencias_producto = productos.map { |m| m["referencia"] }
 
       			expect(nombres_producto).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
       			expect(descripciones_producto).to match_array([@producto_uno.descripcion, @producto_dos.descripcion])
+      			expect(referencias_producto).to match_array([@producto_uno.referencia, @producto_dos.referencia])
       		end
     	end
 
@@ -71,9 +72,11 @@ describe "Productos API" do
 
 				nombres_producto = productos.map { |m| m["nombre"] }
       			descripciones_producto = productos.map { |m| m["descripcion"] }
+      			referencias_producto = productos.map { |m| m["referencia"] }
 
       			expect(nombres_producto).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
       			expect(descripciones_producto).to match_array([@producto_uno.descripcion, @producto_dos.descripcion])
+      			expect(referencias_producto).to match_array([@producto_uno.referencia, @producto_dos.referencia])
 			end
 		end
 	end
@@ -109,6 +112,7 @@ describe "Productos API" do
 				producto = body["producto"]
 				expect(producto["nombre"]).to eq @producto_uno.nombre
       			expect(producto["descripcion"]).to eq @producto_uno.descripcion
+      			expect(producto["referencia"]).to eq @producto_uno.referencia
 
       			precios = producto["precios"]
 				precios_precio = precios.map { |m| m["precio"] }
@@ -145,6 +149,7 @@ describe "Productos API" do
 				producto = body["producto"]
 				expect(producto["nombre"]).to eq @producto_uno.nombre
       			expect(producto["descripcion"]).to eq @producto_uno.descripcion
+      			expect(producto["referencia"]).to eq @producto_uno.referencia
 
       			precios = producto["precios"]
 				precios_precio = precios.map { |m| m["precio"] }
@@ -181,6 +186,7 @@ describe "Productos API" do
 				producto = body["producto"]
 				expect(producto["nombre"]).to eq @producto_uno.nombre
       			expect(producto["descripcion"]).to eq @producto_uno.descripcion
+      			expect(producto["referencia"]).to eq @producto_uno.referencia
 
       			precios = producto["precios"]
 				precios_precio = precios.map { |m| m["precio"] }
@@ -242,7 +248,7 @@ describe "Productos API" do
 
 				delete "/usuarios/#{@usuario_uno.id}/productos/#{@producto_uno.id}", {}, @cabeceras_peticion
 			
-				expect(response.status).to be 204 # Unauthorized
+				expect(response.status).to be 204 # No Content
 				expect(@usuario_uno.reload.productos).not_to include @producto_uno
       		end
 		end
@@ -254,7 +260,7 @@ describe "Productos API" do
 
 				delete "/usuarios/#{@usuario_uno.id}/productos/#{@producto_uno.id}", {}, @cabeceras_peticion
 			
-				expect(response.status).to be 204 # Unauthorized
+				expect(response.status).to be 204 # No Content
 				expect(@usuario_uno.reload.productos).not_to include @producto_uno
       		end
 		end
@@ -271,7 +277,7 @@ describe "Productos API" do
 			@caracteristica_uno = FactoryGirl.create :caracteristica_uno
 			@imagen_uno = FactoryGirl.create :imagen_uno
 
-      		@parametros_producto = {nombre: @producto_tres.nombre, descripcion: @producto_tres.descripcion, 
+      		@parametros_producto = {nombre: @producto_tres.nombre, descripcion: @producto_tres.descripcion, referencia: @producto_tres.referencia, 
       			precios_attributes: [{cantidad_minima: @precio_uno.cantidad_minima, precio: @precio_uno.precio}, {cantidad_minima: @precio_dos.cantidad_minima, precio: @precio_dos.precio}], 
       			caracteristicas_attributes: [{nombre: @caracteristica_uno.nombre, valor: @caracteristica_uno.valor}],
       			imagenes_attributes: [{ public_id: @imagen_uno.public_id}], 
@@ -298,6 +304,7 @@ describe "Productos API" do
       			expect(response.status).to eq 201 # Created
       			expect(@usuario_uno.productos.last.nombre).to eq @producto_tres.nombre
       			expect(@usuario_uno.productos.last.descripcion).to eq @producto_tres.descripcion
+      			expect(@usuario_uno.productos.last.referencia).to eq @producto_tres.referencia
       			expect(@usuario_uno.productos.last.precios.first.precio).to eq @precio_uno.precio
       			expect(@usuario_uno.productos.last.precios.first.cantidad_minima).to eq @precio_uno.cantidad_minima
       			expect(@usuario_uno.productos.last.precios.last.precio).to eq @precio_dos.precio
@@ -319,6 +326,7 @@ describe "Productos API" do
       			expect(response.status).to eq 201 # Created
       			expect(@usuario_uno.productos.last.nombre).to eq @producto_tres.nombre
       			expect(@usuario_uno.productos.last.descripcion).to eq @producto_tres.descripcion
+      			expect(@usuario_uno.productos.last.referencia).to eq @producto_tres.referencia
       			expect(@usuario_uno.productos.last.precios.first.precio).to eq @precio_uno.precio
       			expect(@usuario_uno.productos.last.precios.first.cantidad_minima).to eq @precio_uno.cantidad_minima
       			expect(@usuario_uno.productos.last.precios.last.precio).to eq @precio_dos.precio
@@ -350,7 +358,7 @@ describe "Productos API" do
 			@producto_uno.imagenes << [@imagen_uno, @imagen_dos]
 			@producto_uno.categorias << @categoria_uno
 
-			@parametros_producto = {nombre: @producto_dos.nombre, descripcion: @producto_dos.descripcion, 
+			@parametros_producto = {nombre: @producto_dos.nombre, descripcion: @producto_dos.descripcion, referencia: @producto_dos.referencia,
       			precios_attributes: [{id: @precio_uno.id, cantidad_minima: 20, precio: 50000}, {id: @precio_dos.id, _destroy: 1}], 
       			caracteristicas_attributes: [{ id: 1, nombre: @caracteristica_tres.nombre, valor: @caracteristica_tres.valor}, { nombre: @caracteristica_cuatro.nombre, valor: @caracteristica_cuatro.valor}],
       			imagenes_attributes: [{ id: 2, public_id: @imagen_tres.public_id}], categorias: [{ nombre: @categoria_dos.nombre }]}.to_json
@@ -376,6 +384,7 @@ describe "Productos API" do
 
       			expect(Producto.find(@producto_uno.id).nombre).to eq @producto_dos.nombre
       			expect(Producto.find(@producto_uno.id).descripcion).to eq @producto_dos.descripcion
+      			expect(Producto.find(@producto_uno.id).referencia).to eq @producto_dos.referencia
       			expect(Producto.find(@producto_uno.id).precios.count).to eq 1
       			expect(Precio.find(@precio_uno.id).cantidad_minima).to eq 20
       			expect(Precio.find(@precio_uno.id).precio).to  eq 50000
@@ -401,6 +410,7 @@ describe "Productos API" do
 
       			expect(Producto.find(@producto_uno.id).nombre).to eq @producto_dos.nombre
       			expect(Producto.find(@producto_uno.id).descripcion).to eq @producto_dos.descripcion
+      			expect(Producto.find(@producto_uno.id).referencia).to eq @producto_dos.referencia
       			expect(Producto.find(@producto_uno.id).precios.count).to eq 1
       			expect(Precio.find(@precio_uno.id).cantidad_minima).to eq 20
       			expect(Precio.find(@precio_uno.id).precio).to  eq 50000
@@ -428,9 +438,11 @@ describe "Productos API" do
 
 				nombres_producto = productos.map { |m| m["nombre"] }
       			descripciones_producto = productos.map { |m| m["descripcion"] }
+      			referencias_producto = productos.map { |m| m["referencia"]}
 
       			expect(nombres_producto).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
       			expect(descripciones_producto).to match_array([@producto_uno.descripcion, @producto_dos.descripcion])
+      			expect(referencias_producto).to match_array([@producto_uno.referencia, @producto_dos.referencia])
 			end
 		end
 
@@ -448,9 +460,11 @@ describe "Productos API" do
 
 				nombres_producto = productos.map { |m| m["nombre"] }
       			descripciones_producto = productos.map { |m| m["descripcion"] }
+      			referencias_producto = productos.map { |m| m["referencia"]}
 
       			expect(nombres_producto).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
       			expect(descripciones_producto).to match_array([@producto_uno.descripcion, @producto_dos.descripcion])
+      			expect(referencias_producto).to match_array([@producto_uno.referencia, @producto_dos.referencia])
 			end
 		end
 
@@ -468,9 +482,11 @@ describe "Productos API" do
 
 				nombres_producto = productos.map { |m| m["nombre"] }
       			descripciones_producto = productos.map { |m| m["descripcion"] }
+      			referencias_producto = productos.map { |m| m["referencia"]}
 
       			expect(nombres_producto).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
       			expect(descripciones_producto).to match_array([@producto_uno.descripcion, @producto_dos.descripcion])
+      			expect(referencias_producto).to match_array([@producto_uno.referencia, @producto_dos.referencia])
 			end
 		end
 	end
@@ -486,6 +502,7 @@ describe "Productos API" do
 				producto = body['producto']
 				expect(producto["nombre"]).to eq @producto_uno.nombre
       			expect(producto["descripcion"]).to eq @producto_uno.descripcion
+      			expect(producto["referencia"]).to eq @producto_uno.referencia
       		end
       	end
 
@@ -500,6 +517,7 @@ describe "Productos API" do
 				producto = body['producto']
 				expect(producto["nombre"]).to eq @producto_uno.nombre
       			expect(producto["descripcion"]).to eq @producto_uno.descripcion
+      			expect(producto["referencia"]).to eq @producto_uno.referencia
       		end
       	end
 
@@ -514,6 +532,7 @@ describe "Productos API" do
 				producto = body['producto']
 				expect(producto["nombre"]).to eq @producto_uno.nombre
       			expect(producto["descripcion"]).to eq @producto_uno.descripcion
+      			expect(producto["referencia"]).to eq @producto_uno.referencia
       		end
       	end
 	end

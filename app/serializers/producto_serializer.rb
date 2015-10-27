@@ -1,7 +1,8 @@
 class ProductoSerializer < ActiveModel::Serializer
   attributes :id,
   	:nombre,
-    :descripcion
+    :descripcion,
+    :referencia
 
     
     #Asociaciones

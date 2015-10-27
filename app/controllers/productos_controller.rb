@@ -78,6 +78,7 @@ private
 	def parametros_producto_crear
     	params.permit(:nombre,
        	:descripcion,
+        :referencia,
         precios_attributes: [:precio, :cantidad_minima],
         caracteristicas_attributes: [:nombre, :valor],
         imagenes_attributes: [:public_id])
@@ -86,6 +87,7 @@ private
   def parametros_producto_actualizar
       params.permit(:nombre,
         :descripcion,
+        :referencia,
         precios_attributes: [:id, :precio, :cantidad_minima, :_destroy],
         caracteristicas_attributes: [:id, :nombre, :valor, :_destroy],
         imagenes_attributes: [:id, :public_id, :_destroy])
