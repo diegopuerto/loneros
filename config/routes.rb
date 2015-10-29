@@ -7,33 +7,33 @@ Rails.application.routes.draw do
     except: [:edit, :new],
     defaults: { format: :json }  do
 
+    resources :productos,
+     except: [:edit, :new],
+     defaults: { usuario_producto: true} do
+
+      resources :precios,
+        except: [:edit, :new]
+
+      resources :caracteristicas,
+        except: [:edit, :new]
+
+      resources :imagenes,
+        except: [:edit, :new]
+
+      resources :categorias,
+        only: [:index, :create, :destroy],
+        defaults: { categoria_producto: true }
+
+     end
+  end
+
   resources :productos,
-   except: [:edit, :new],
-   defaults: { usuario_producto: true} do
+    only: [:index, :show, :update],
+    defaults: { format: :json }
 
-    resources :precios,
-      except: [:edit, :new]
-
-    resources :caracteristicas,
-      except: [:edit, :new]
-
-    resources :imagenes,
-      except: [:edit, :new]
-	
-    resources :categorias,
-      only: [:index, :create, :destroy],
-      defaults: { categoria_producto: true }
-
-   end
-end
-
-     resources :productos,
-      only: [:index, :show],
-      defaults: { format: :json }
-
-     resources :categorias,
-       except: [:edit, :new],
-       defaults: { format: :json }
+  resources :categorias,
+    except: [:edit, :new],
+    defaults: { format: :json }
 
   root 'pruebas#index'
 end

@@ -92,7 +92,8 @@ private
   end
 
   def establecer_usuario_producto
-    @usuario = Usuario.find(params[:usuario_id])
+    #@usuario = Usuario.find(params[:usuario_id])
     @producto = Producto.find(params[:id])
+    @usuario = @producto.usuario
   end
 end
