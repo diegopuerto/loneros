@@ -53,8 +53,6 @@ class ProductosController < ApplicationController
 
   # PATCH/PUT /usuarios/:usuario_id/productos/:id
   def update
-    #up = @usuario.productos.find(@producto.id)
-    #@producto.categorias = params[:categorias]
     if params[:categorias]
       @categorias = []
       params[:categorias].each do |c|
@@ -66,8 +64,8 @@ class ProductosController < ApplicationController
     if @producto.update(parametros_producto_actualizar)
       head :no_content
     else
-      render json: @usuario.productos.errors, status: :unprocessable_entity
-    end    
+      render json: @producto.errors, status: :unprocessable_entity
+    end
   end
 
 private
