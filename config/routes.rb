@@ -23,9 +23,16 @@ Rails.application.routes.draw do
     resources :categorias,
       only: [:index, :create, :destroy],
       defaults: { categoria_producto: true }
-
    end
+
+    resources :pedidos,
+      only: [:index],
+      defaults: { usuario_pedido: true }
 end
+
+    resources :pedidos,
+      except: [:edit, :new],
+      defaults: { format: :json } 
 
      resources :productos,
       only: [:index, :show],

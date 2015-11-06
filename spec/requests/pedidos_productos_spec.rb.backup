@@ -1,0 +1,172 @@
+require 'rails_helper'
+
+RSpec.describe "PedidosProductos", type: :request do
+   	before :each do
+    	@cabeceras_peticion = {
+      	"Accept": "application/json",
+      	"Content-Type": "application/json"
+    }
+    @usuario_uno = FactoryGirl.create :usuario_uno
+    @admin = FactoryGirl.create :admin
+    @producto_uno = FactoryGirl.create(:producto1, usuario_id: @usuario_uno.id)
+    @producto_dos = FactoryGirl.create(:producto2, usuario_id: @usuario_uno.id)
+    @precio_uno = FactoryGirl.create :precio1
+    @precio_dos = FactoryGirl.create :precio2
+    @producto_uno.precios << @precio_uno
+    @producto_dos.precios << @precio_dos
+    @pedido_uno = FactoryGirl.create :pedido_uno
+    @pedido_dos = FactoryGirl.create :pedido_dos
+	end
+
+	# index
+  	describe "GET /pedidos/:pedido_id/productos" do
+  		it "permite la consulta y devuelve los productos del pedido con id :pedido_id" do
+  			@pedido_uno.save && @pedido_uno.pedidos_productos.create(:producto => @producto_uno, :cantidad => 5, :precio => @precio_uno.precio)
+  			@pedido_uno.save && @pedido_uno.pedidos_productos.create(:producto => @producto_dos, :cantidad => 10, :precio => @precio_dos.precio)
+      		@pedido_dos.save && @pedido_dos.pedidos_productos.create(:producto => @producto_dos, :cantidad => 10, :precio => @precio_dos.precio)
+
+			get "/pedidos/#{@pedido_uno.id}/productos", {}, @cabeceras_peticion
+
+       	 	expect(response.status).to eq 200 # OK
+       	 	expect(@pedido_uno.productos.count).to eq 2
+
+       	 	body = JSON.parse(response.body)
+        	productos = body["productos"]
+        	nombres_productos = [productos[0]["nombre"], productos[1]["nombre"]]
+        	descripciones_productos = [productos[0]["descripcion"], productos[1]["descripcion"]]
+        	referencias_productos = [productos[0]["referencia"], productos[1]["referencia"]]
+
+        	expect(nombres_productos).to match_array([@producto_uno.nombre, @producto_dos.nombre ])
+        	expect(descripciones_productos).to match_array([@producto_uno.descripcion, @producto_dos.descripcion ])
+        	expect(referencias_productos).to match_array([@producto_uno.referencia, @producto_dos.referencia ])
+    	end
+    end
+
+    # create
+  	describe "POST /pedidos/:pedido_id/productos" do
+  		context "usuario no autenticado" do
+  			it "no le permite agregar un producto a un pedido" do
+  					@parametros_producto = {
+      				"cantidad": 7,
+        			"producto_id": @producto_uno.id,
+        			"precio": 10000
+      				}.to_json
+
+      				expect(@pedido_uno.productos).not_to include(@producto_uno)
+
+					post "/pedidos/#{@pedido_uno.id}/productos", @parametros_producto, @cabeceras_peticion
+
+        			expect(response.status).to eq 401 # Unauthorized
+        	end
+        end
+
+        context "usuario autenticado no administrador" do
+        	it "le permite agregar un producto a un pedido" do
+
+  				@parametros_producto = {
+      			"cantidad": 7,
+        		"producto_id": @producto_uno.id,
+        		"precio": 10000
+      			}.to_json
+
+      			expect(@pedido_uno.productos).not_to include(@producto_uno)
+
+      			@cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+  				post "/pedidos/#{@pedido_uno.id}/productos", @parametros_producto, @cabeceras_peticion
+
+        		expect(response.status).to eq 201 # Created
+        		expect(@pedido_uno.reload.productos).to include(@producto_uno)
+        		expect(@pedido_uno.productos.last.nombre).to eq @producto_uno.nombre
+      		end
+    	end
+
+    	 context "usuario autenticado administrador" do
+        	it "le permite agregar un producto a un pedido" do
+
+  				@parametros_producto = {
+      			"cantidad": 7,
+        		"producto_id": @producto_uno.id,
+        		"precio": 10000
+      			}.to_json
+
+      			expect(@pedido_uno.productos).not_to include(@producto_uno)
+
+      			@cabeceras_peticion.merge! @admin.create_new_auth_token
+
+  				post "/pedidos/#{@pedido_uno.id}/productos", @parametros_producto, @cabeceras_peticion
+
+        		expect(response.status).to eq 201 # Created
+        		expect(@pedido_uno.reload.productos).to include(@producto_uno)
+        		expect(@pedido_uno.productos.last.nombre).to eq @producto_uno.nombre
+      		end
+    	end
+    end
+
+    # destroy
+  	describe "DELETE /pedidos/:pedido_id/productos/:id" do
+  		before :each do
+      		@pedido_uno.productos.clear
+      		@pedido_uno.save && @pedido_uno.pedidos_productos.create(:producto => @producto_uno, :cantidad => 5, :precio => @precio_uno.precio)
+      		expect(@pedido_uno.reload.productos).to include(@producto_uno)
+    	end
+
+    	context "usuario no autenticado" do 
+    		it "no le permite eliminar productos de un pedido" do
+
+    			delete "/pedidos/#{@pedido_uno.id}/productos/#{@producto_uno.id}", {}, @cabeceras_peticion
+
+        		expect(response.status).to eq 401 # Unauthorized
+        		expect(response.body).to include("Acceso restringido. Solo Administradores")
+      		end
+    	end
+
+    	context "usuario autenticado no administrador" do 
+    		it "le permite eliminar productos de un pedido" do
+
+    			@cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+    			delete "/pedidos/#{@pedido_uno.id}/productos/#{@producto_uno.id}", {}, @cabeceras_peticion
+
+        		expect(response.status).to eq 204 # No Content
+        		expect(@pedido_uno.reload.productos).not_to include(@producto_uno)
+      		end
+    	end
+
+    	context "usuario autenticado administrador" do 
+    		it "le permite eliminar productos de un pedido" do
+
+    			@cabeceras_peticion.merge! @admin.create_new_auth_token
+
+    			delete "/pedidos/#{@pedido_uno.id}/productos/#{@producto_uno.id}", {}, @cabeceras_peticion
+
+        		expect(response.status).to eq 204 # No Content
+        		expect(@pedido_uno.reload.productos).not_to include(@producto_uno)
+      		end
+    	end
+    end
+
+    # update
+  	describe "PUT /pedidos/:pedido_id/productos/:id" do
+
+    	before :each do
+        	@parametros_producto = {
+        	"cantidad": 21
+        	}.to_json
+
+        	@pedido_uno.save && @pedido_uno.pedidos_productos.create(:producto => @producto_uno, :cantidad => 5, :precio => @producto_uno.precio)
+        	expect(@pedido_uno.reload.productos).to include(@producto_uno)
+    	end
+
+
+    	context "usuario no autenticado" do
+      		it "No permite la consulta y devuelve un mensaje de error" do
+
+        		put "/pedidos/#{@pedido_uno.id}/productos/#{@producto_uno.id}", @parametros_producto, @cabeceras_peticion
+
+        		expect(response.status).to eq 401 # Unauthorized
+        		expect(response.body).to include("Acceso restringido. Solo Administradores")
+      		end
+    	end
+   	end
+end

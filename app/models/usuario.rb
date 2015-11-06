@@ -13,6 +13,8 @@ class Usuario < ActiveRecord::Base
 
   #Asociaciones
   has_many :productos, dependent: :destroy
+  has_many :pedidos_distribuidor, :foreign_key => "distribuidor_id", :class_name => "Pedido"
+  has_many :pedidos_proveedor, :foreign_key => "proveedor_id", :class_name => "Pedido"
 
   def signed_in?
     self.nombre != nil

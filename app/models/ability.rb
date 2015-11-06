@@ -19,6 +19,14 @@ class Ability
           can :destroy, Producto do |producto|
             producto.try(:usuario) == user
           end
+          can :read, Pedido, :distribuidor_id => user.id
+          can :read, Pedido, :proveedor_id => user.id
+          can :create, Pedido
+          can :update, Pedido, :distribuidor_id => user.id
+          can :update, Pedido, :proveedor_id => user.id
+          can :destroy, Pedido, :distribuidor_id => user.id
+          can :destroy, Pedido, :proveedor_id => user.id
+
         else
           can :read, Producto
           can :read, Usuario
