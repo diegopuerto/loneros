@@ -424,6 +424,94 @@ describe "Productos API" do
 		end
 	end
 
+	# update
+	describe "PUT /productos/:id" do
+
+		before :each do
+			@caracteristica_uno = FactoryGirl.create :caracteristica_uno
+			@caracteristica_dos = FactoryGirl.create :caracteristica_dos
+			@caracteristica_tres = FactoryGirl.create :caracteristica_tres
+			@caracteristica_cuatro = FactoryGirl.create :caracteristica_cuatro
+			@precio_uno = FactoryGirl.create :precio1
+			@precio_dos = FactoryGirl.create :precio2
+			@imagen_uno = FactoryGirl.create :imagen_uno
+			@imagen_dos = FactoryGirl.create :imagen_dos
+			@imagen_tres = FactoryGirl.create :imagen_tres
+
+			@producto_uno.caracteristicas << [@caracteristica_uno, @caracteristica_dos]
+			@producto_uno.precios << [@precio_uno, @precio_dos]
+			@producto_uno.imagenes << [@imagen_uno, @imagen_dos]
+			@producto_uno.categorias << @categoria_uno
+
+			@parametros_producto = {nombre: @producto_dos.nombre, descripcion: @producto_dos.descripcion, referencia: @producto_dos.referencia,
+      			precios_attributes: [{id: @precio_uno.id, cantidad_minima: 20, precio: 50000}, {id: @precio_dos.id, _destroy: 1}], 
+      			caracteristicas_attributes: [{ id: 1, nombre: @caracteristica_tres.nombre, valor: @caracteristica_tres.valor}, { nombre: @caracteristica_cuatro.nombre, valor: @caracteristica_cuatro.valor}],
+      			imagenes_attributes: [{ id: 2, public_id: @imagen_tres.public_id}], categorias: [{ nombre: @categoria_dos.nombre }]}.to_json
+    end
+
+    context "usuario no autenticado" do
+      it "No actualiza el producto con id :id" do
+        put "/productos/#{@producto_uno.id}", @parametros_producto, @cabeceras_peticion
+
+        expect(response.status).to be 401 #Unauthorized
+      end
+		end
+
+		context "usuario autenticado no administrador" do
+      it "Actualiza el producto si el usuario autenticado es el dueño del producto" do
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        put "/productos/#{@producto_uno.id}", @parametros_producto, @cabeceras_peticion
+
+        expect(response.status).to be 204 # No Content
+
+        expect(Producto.find(@producto_uno.id).nombre).to eq @producto_dos.nombre
+        expect(Producto.find(@producto_uno.id).descripcion).to eq @producto_dos.descripcion
+        expect(Producto.find(@producto_uno.id).referencia).to eq @producto_dos.referencia
+        expect(Producto.find(@producto_uno.id).precios.count).to eq 1
+        expect(Precio.find(@precio_uno.id).cantidad_minima).to eq 20
+        expect(Precio.find(@precio_uno.id).precio).to  eq 50000
+        expect(Caracteristica.find(@caracteristica_uno.id).nombre).to eq @caracteristica_tres.nombre
+        expect(Caracteristica.find(@caracteristica_uno.id).valor).to eq @caracteristica_tres.valor
+        expect(Producto.find(@producto_uno.id).caracteristicas.count).to eq 3
+        expect(Imagen.find(@imagen_dos.id).public_id).to eq @imagen_tres.public_id
+        expect(Producto.find(@producto_uno.id).categorias.count).to eq 1
+        expect(Producto.find(@producto_uno.id).categorias[0].nombre).to eq @categoria_dos.nombre
+      end
+
+      it "No actualiza el producto si el usuario autenticado no es el dueño del producto" do
+        @cabeceras_peticion.merge! @usuario_dos.create_new_auth_token
+
+        put "/productos/#{@producto_uno.id}", @parametros_producto, @cabeceras_peticion
+
+        expect(response.status).to be 401 #Unauthorized
+      end
+		end
+
+		context "usuario autenticado administrador" do
+      it "Actualiza el producto" do
+        @cabeceras_peticion.merge! @admin.create_new_auth_token
+
+        put "/productos/#{@producto_uno.id}", @parametros_producto, @cabeceras_peticion
+
+        expect(response.status).to be 204 #No Content
+
+        expect(Producto.find(@producto_uno.id).nombre).to eq @producto_dos.nombre
+        expect(Producto.find(@producto_uno.id).descripcion).to eq @producto_dos.descripcion
+        expect(Producto.find(@producto_uno.id).referencia).to eq @producto_dos.referencia
+        expect(Producto.find(@producto_uno.id).precios.count).to eq 1
+        expect(Precio.find(@precio_uno.id).cantidad_minima).to eq 20
+        expect(Precio.find(@precio_uno.id).precio).to  eq 50000
+        expect(Caracteristica.find(@caracteristica_uno.id).nombre).to eq @caracteristica_tres.nombre
+        expect(Caracteristica.find(@caracteristica_uno.id).valor).to eq @caracteristica_tres.valor
+        expect(Producto.find(@producto_uno.id).caracteristicas.count).to eq 3
+        expect(Imagen.find(@imagen_dos.id).public_id).to eq @imagen_tres.public_id
+        expect(Producto.find(@producto_uno.id).categorias.count).to eq 1
+        expect(Producto.find(@producto_uno.id).categorias[0].nombre).to eq @categoria_dos.nombre
+      end
+		end
+	end
+
 	# index
 	describe "GET /productos" do
 		context "usuario no autenticado" do 

@@ -35,6 +35,24 @@ RSpec.describe "Categorias", type: :request do
       			expect(nombres_categoria).to match_array(["categoria_uno", "categoria_dos" ])
 			end
 		end
+
+    context "usuario autenticado no administrador" do
+      it "Devuelve todas las categorias" do
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        get "/categorias", {}, @cabeceras_peticion
+
+        expect(response.status).to eq 200 # OK
+
+        body = JSON.parse(response.body)
+        categorias = body['categorias']
+
+        nombres_categoria = categorias.map { |m| m["nombre"] }
+
+        expect(nombres_categoria).to match_array([@categoria_uno.nombre, @categoria_dos.nombre])
+      end
+
+    end
 	end
 
 	# show
