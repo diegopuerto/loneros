@@ -52,6 +52,9 @@ class UsuariosController < ApplicationController
        :uid,
        :provider,
        :nombre,
+       :nombre_marca,
+       :logo_marca,
+       :direccion,
        :imagen,
        :celular)
     end
@@ -60,6 +63,9 @@ class UsuariosController < ApplicationController
     	params.permit(:email,
     		:nombre,
     		:imagen,
+        :nombre_marca,
+        :logo_marca,
+        :direccion,
     		:celular)
     end
 
