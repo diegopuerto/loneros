@@ -56,13 +56,11 @@ ActiveRecord::Schema.define(version: 20151027155940) do
     t.integer  "estado",           default: 0
     t.integer  "distribuidor_id"
     t.integer  "proveedor_id"
-    t.integer  "factura_id"
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
 
   add_index "pedidos", ["distribuidor_id"], name: "index_pedidos_on_distribuidor_id"
-  add_index "pedidos", ["factura_id"], name: "index_pedidos_on_factura_id"
   add_index "pedidos", ["proveedor_id"], name: "index_pedidos_on_proveedor_id"
 
   create_table "pedidos_productos", force: :cascade do |t|

@@ -3,7 +3,6 @@ class Pedido < ActiveRecord::Base
   # Asociaciones
   belongs_to :distribuidor, :class_name => "Usuario"
   belongs_to :proveedor, :class_name => "Usuario"
-  belongs_to :factura
   has_many :pedidos_productos
   has_many :productos, through: :pedidos_productos
 

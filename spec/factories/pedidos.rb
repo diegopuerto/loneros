@@ -7,7 +7,6 @@ factory :pedido do
   estado 1
   distribuidor nil
   proveedor nil
-  factura nil
  end
 
  factory :pedido_uno, class: Pedido do
@@ -18,7 +17,6 @@ factory :pedido do
   estado 1
   distribuidor nil
   proveedor nil
-  factura nil
  end
 
  factory :pedido_dos, class: Pedido do
@@ -29,7 +27,6 @@ factory :pedido do
   estado 1
   distribuidor nil
   proveedor nil
-  factura nil
  end
 
  factory :pedido_tres, class: Pedido do
@@ -40,7 +37,6 @@ factory :pedido do
   estado 1
   distribuidor nil
   proveedor nil
-  factura nil
  end
 
 end
