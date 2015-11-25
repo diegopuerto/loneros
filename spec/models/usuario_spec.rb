@@ -32,6 +32,18 @@ RSpec.describe Usuario, type: :model do
       expect(@usuario.errors[:celular]).to include("can't be blank")
     end
 
+    it "no es valido sin nombre_marca" do 
+      @usuario.nombre_marca = nil
+      @usuario.valid?
+      expect(@usuario.errors[:nombre_marca]).to include("can't be blank")
+    end
+
+    it "no es valido sin direccion" do 
+      @usuario.direccion = nil
+      @usuario.valid?
+      expect(@usuario.errors[:direccion]).to include("can't be blank")
+    end
+
     it "no es válido si el correo no es único" do
       usuario_duplicado = @usuario.dup
       usuario_duplicado.valid?
@@ -51,5 +63,4 @@ RSpec.describe Usuario, type: :model do
       expect(@usuario.errors[:reputacion]).to include("must be an integer")
     end
   end
-
 end

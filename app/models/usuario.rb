@@ -6,7 +6,7 @@ class Usuario < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   # Validaciones
-  validates_presence_of :nombre, :email, :celular
+  validates_presence_of :nombre, :email, :celular, :nombre_marca, :direccion
   validates_uniqueness_of :email
   validates :reputacion,
        numericality: { greater_than_or_equal_to: 0, only_integer: true  }

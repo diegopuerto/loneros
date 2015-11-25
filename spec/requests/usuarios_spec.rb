@@ -198,6 +198,10 @@ RSpec.describe "Usuarios", type: :request do
         expect(Usuario.last.nombre).to eq usuario_valido.nombre
         expect(Usuario.last.imagen).to eq usuario_valido.imagen
         expect(Usuario.last.celular).to eq usuario_valido.celular
+        expect(Usuario.last.nombre_marca).to eq usuario_valido.nombre_marca
+        expect(Usuario.last.logo_marca).to eq usuario_valido.logo_marca
+        expect(Usuario.last.direccion).to eq usuario_valido.direccion
+
       end
     end
   end
@@ -243,6 +247,9 @@ RSpec.describe "Usuarios", type: :request do
         expect(Usuario.find(@usuario_uno.id).nombre).to eq usuario_valido.nombre
         expect(Usuario.find(@usuario_uno.id).imagen).to eq usuario_valido.imagen
         expect(Usuario.find(@usuario_uno.id).celular).to eq usuario_valido.celular
+        expect(Usuario.find(@usuario_uno.id).nombre_marca).to eq usuario_valido.nombre_marca
+        expect(Usuario.find(@usuario_uno.id).logo_marca).to eq usuario_valido.logo_marca
+        expect(Usuario.find(@usuario_uno.id).direccion).to eq usuario_valido.direccion
         # Este atributo no se puede editar
         expect(Usuario.find(@usuario_uno.id).reputacion).to eq @usuario_uno.reputacion
       end

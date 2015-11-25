@@ -9,6 +9,8 @@ FactoryGirl.define do
     reputacion 1000
     celular "3003453234"
     imagen "imagen.png"
+    nombre_marca "nombre_marca_valido"
+    direccion "direccion_valida"
   end
 
   factory :usuario_uno, class: Usuario do
@@ -20,6 +22,8 @@ FactoryGirl.define do
     reputacion 3000
     celular "3044533334"
     imagen "imagen_uno.png"
+    nombre_marca "nombre_marca_uno"
+    direccion "direccion_usuario_uno"
   end
 
   factory :usuario_dos, class: Usuario do
@@ -32,6 +36,8 @@ FactoryGirl.define do
     celular "3022222234"
     imagen "imagen_dos.png"
     admin false
+    nombre_marca "nombre_marca_dos"
+    direccion "direccion_usuario_dos"
   end
 
   factory :admin, class: Usuario do
@@ -43,6 +49,8 @@ FactoryGirl.define do
     imagen "admin.png"
     celular "3006785432"
     admin true
+    nombre_marca "nombre_marca_admin"
+    direccion "direccion_admin"
   end
 
 end
