@@ -10,6 +10,7 @@ gem 'devise_token_auth', '0.1.31'
 gem 'devise', '3.5.1'
 gem 'omniauth', '1.2.2'
 gem 'cancancan', '~> 1.13', '>= 1.13.1'
+gem 'activesupport-json_encoder'
 
 group :development, :test do
   gem 'spring', '1.4.0'

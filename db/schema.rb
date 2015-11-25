@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151026203941) do
+ActiveRecord::Schema.define(version: 20151027155940) do
 
   create_table "caracteristicas", force: :cascade do |t|
     t.string   "nombre",      null: false
@@ -47,6 +47,35 @@ ActiveRecord::Schema.define(version: 20151026203941) do
   end
 
   add_index "imagenes", ["producto_id"], name: "index_imagenes_on_producto_id"
+
+  create_table "pedidos", force: :cascade do |t|
+    t.string   "direccion",                    null: false
+    t.string   "comprobante_pago"
+    t.string   "numero_guia"
+    t.decimal  "costo_total",                  null: false
+    t.integer  "estado",           default: 0
+    t.integer  "distribuidor_id"
+    t.integer  "proveedor_id"
+    t.integer  "factura_id"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+  end
+
+  add_index "pedidos", ["distribuidor_id"], name: "index_pedidos_on_distribuidor_id"
+  add_index "pedidos", ["factura_id"], name: "index_pedidos_on_factura_id"
+  add_index "pedidos", ["proveedor_id"], name: "index_pedidos_on_proveedor_id"
+
+  create_table "pedidos_productos", force: :cascade do |t|
+    t.integer  "pedido_id"
+    t.integer  "producto_id"
+    t.decimal  "cantidad"
+    t.decimal  "precio"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "pedidos_productos", ["pedido_id"], name: "index_pedidos_productos_on_pedido_id"
+  add_index "pedidos_productos", ["producto_id"], name: "index_pedidos_productos_on_producto_id"
 
   create_table "precios", force: :cascade do |t|
     t.integer  "cantidad_minima", null: false

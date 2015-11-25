@@ -30,8 +30,8 @@ class ProductosController < ApplicationController
 
   # DELETE /usuarios/:usuario_id/productos/:id
   def destroy
-    @usuario.productos.destroy(@producto)
-    head :no_content
+      @usuario.productos.destroy(@producto)
+      head :no_content
   end
 
   # POST /usuarios/:usuario_id/productos
@@ -49,7 +49,7 @@ class ProductosController < ApplicationController
     else
       render json: @producto.errors, status: :unprocessable_entity
     end
-  end
+end
 
   # PATCH/PUT /usuarios/:usuario_id/productos/:id
   def update

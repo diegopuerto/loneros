@@ -23,7 +23,6 @@ Rails.application.routes.draw do
       resources :categorias,
         only: [:index, :create, :destroy],
         defaults: { categoria_producto: true }
-
      end
   end
 
@@ -34,6 +33,10 @@ Rails.application.routes.draw do
   resources :categorias,
     except: [:edit, :new],
     defaults: { format: :json }
+
+  resources :pedidos,
+    except: [:edit, :new],
+    defaults: { usuario_pedido: true }
 
   root 'pruebas#index'
 end
