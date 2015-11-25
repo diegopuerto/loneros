@@ -1,10 +1,13 @@
 class AddMarcaDireccionToUsuarios < ActiveRecord::Migration
-  def change
-	add_column :usuarios, :nombre_marca, :string
-	add_column :usuarios, :logo_marca, :string
-	add_column :usuarios, :direccion, :string
+  def up
+    add_column :usuarios, :nombre_marca, :string, :null => false, :default => "loneros"
+    add_column :usuarios, :logo_marca, :string
+    add_column :usuarios, :direccion, :string, :null => false, :default => "loneros"
+  end
 
-	change_column :usuarios, :nombre_marca, :string, :null => false
-	change_column :usuarios, :direccion, :string, :null => false
+  def down
+    remove_column :usuarios, :nombre_marca
+    remove_column :usuarios, :logo_marca
+    remove_column :usuarios, :direccion
   end
 end
