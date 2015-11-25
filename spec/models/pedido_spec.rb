@@ -40,6 +40,4 @@ RSpec.describe Pedido, type: :model do
 	  		expect(@pedido.errors[:costo_total]).to include(I18n.t 'errors.messages.greater_than_or_equal_to', count: 0)
   		end
   	end
-
-
 end

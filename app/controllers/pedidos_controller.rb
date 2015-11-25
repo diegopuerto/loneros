@@ -8,7 +8,8 @@ class PedidosController < ApplicationController
 		if @usuario.admin?
 			render json: @pedidos
 		else
-			render :json => {:distribuidor => @usuario.pedidos_distribuidor, :proveedor => @usuario.pedidos_proveedor} 
+			@pedidos_todos = @usuario.pedidos_distribuidor + @usuario.pedidos_proveedor
+			render json: @pedidos_todos 
 		end
 	end
 

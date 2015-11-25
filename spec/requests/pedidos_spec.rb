@@ -43,32 +43,19 @@ RSpec.describe "Pedidos", type: :request do
 				expect(response.status).to eq 200 # OK
 
 				body = JSON.parse(response.body)
-                distribuidores = body["distribuidor"]
-                proveedores = body["proveedor"]
+				pedidos = body["pedidos"]
 
-                direcciones_distribuidores = distribuidores.map { |m| m["direccion"] }
-                comprobantes_distribuidores = distribuidores.map { |m| m["comprobante_pago"] }
-                guias_distribuidores = distribuidores.map { |m| m["numero_guia"] }
-                costos_distribuidores = distribuidores.map { |m| m["costo_total"] }
-                estados_distribuidores = distribuidores.map { |m| m["estado"] }
+                direcciones_pedidos = pedidos.map { |m| m["direccion"] }
+                comprobantes_pedidos = pedidos.map { |m| m["comprobante_pago"] }
+                guias_pedidos = pedidos.map { |m| m["numero_guia"] }
+                costos_pedidos = pedidos.map { |m| m["costo_total"] }
+                estados_pedidos = pedidos.map { |m| m["estado"] }
 
-                direcciones_proveedores = proveedores.map { |m| m["direccion"] }
-                comprobantes_proveedores = proveedores.map { |m| m["comprobante_pago"] }
-                guias_proveedores = proveedores.map { |m| m["numero_guia"] }
-                costos_proveedores = proveedores.map { |m| m["costo_total"] }
-                estados_proveedores = proveedores.map { |m| m["estado"] }
-
-                expect(direcciones_distribuidores).to match_array([@pedido_uno.direccion])
-                expect(comprobantes_distribuidores).to match_array([@pedido_uno.comprobante_pago])
-                expect(guias_distribuidores).to match_array([@pedido_uno.numero_guia])
-                expect(costos_distribuidores).to match_array([@pedido_uno.costo_total])
-                expect(estados_distribuidores).to match_array([@pedido_uno.estado])
-
-                expect(direcciones_proveedores).to match_array([@pedido_dos.direccion])
-                expect(comprobantes_proveedores).to match_array([@pedido_dos.comprobante_pago])
-                expect(guias_proveedores).to match_array([@pedido_dos.numero_guia])
-                expect(costos_proveedores).to match_array([@pedido_dos.costo_total])
-                expect(estados_proveedores).to match_array([@pedido_dos.estado])
+                expect(direcciones_pedidos).to match_array([@pedido_uno.direccion, @pedido_dos.direccion])
+                expect(comprobantes_pedidos).to match_array([@pedido_uno.comprobante_pago, @pedido_dos.comprobante_pago])
+                expect(guias_pedidos).to match_array([@pedido_uno.numero_guia, @pedido_dos.numero_guia])
+                expect(costos_pedidos).to match_array([@pedido_uno.costo_total, @pedido_dos.costo_total])
+                expect(estados_pedidos).to match_array([@pedido_uno.estado, @pedido_dos.estado])
             end
         end
 
@@ -363,6 +350,7 @@ RSpec.describe "Pedidos", type: :request do
     			delete "/pedidos/#{@pedido_uno.id}", {}, @cabeceras_peticion
 
     			expect(response.status).to eq 401 # Unauthorized
+    			expect(@usuario_uno.pedidos_distribuidor.count).to eq 1
     		end
     	end
 
@@ -374,18 +362,19 @@ RSpec.describe "Pedidos", type: :request do
     			delete "/pedidos/#{@pedido_uno.id}", {}, @cabeceras_peticion
 
     			expect(response.status).to eq 401 # Unauthorized
+    			expect(@usuario_uno.pedidos_distribuidor.count).to eq 1
     		end
     	end
 
     	context "usuario autenticado dueño del pedido" do 
-    		it "le permite eliminar el pedido con id :id" do 
+    		it "no le permite eliminar el pedido con id :id" do 
 
     			@cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
 
     			delete "/pedidos/#{@pedido_uno.id}", {}, @cabeceras_peticion
 
-    			expect(response.status).to eq 204 #No Content
-    			expect(@usuario_uno.pedidos_distribuidor.count).to eq 0
+    			expect(response.status).to eq 401 # Unauthorized
+    			expect(@usuario_uno.pedidos_distribuidor.count).to eq 1
     		end
     	end
 
