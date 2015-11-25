@@ -6,8 +6,8 @@ class CreatePedidos < ActiveRecord::Migration
       t.string :numero_guia
       t.decimal :costo_total, null: false
       t.integer :estado, :default => 0
-      t.references :distribuidor, index: true, foreign_key: true
-      t.references :proveedor, index: true, foreign_key: true
+      t.integer :distribuidor_id, index: true, foreign_key: true
+      t.integer :proveedor_id, index: true, foreign_key: true
       t.references :factura, index: true, foreign_key: true
 
       t.timestamps null: false
