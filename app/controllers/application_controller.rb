@@ -19,13 +19,11 @@ class ApplicationController < ActionController::API
       devise_parameter_sanitizer.for(:sign_up) << :celular
       devise_parameter_sanitizer.for(:sign_up) << :nombre_marca
       devise_parameter_sanitizer.for(:sign_up) << :logo_marca
-      devise_parameter_sanitizer.for(:sign_up) << :direccion
       devise_parameter_sanitizer.for(:account_update) << :nombre
       devise_parameter_sanitizer.for(:account_update) << :imagen
       devise_parameter_sanitizer.for(:account_update) << :celular
       devise_parameter_sanitizer.for(:account_update) << :nombre_marca
       devise_parameter_sanitizer.for(:account_update) << :logo_marca
-      devise_parameter_sanitizer.for(:account_update) << :direccion
     end
 
     # in application_controller.rb

@@ -26,7 +26,6 @@ RSpec.describe "Auth", type: :request do
       expect(Usuario.last.imagen).to eq usuario_nuevo.imagen
       expect(Usuario.last.nombre_marca).to eq usuario_nuevo.nombre_marca
       expect(Usuario.last.logo_marca).to eq usuario_nuevo.logo_marca
-      expect(Usuario.last.direccion).to eq usuario_nuevo.direccion
       expect(Devise::Encryptor.compare(Usuario, Usuario.last.encrypted_password, usuario_nuevo.password)).to be true
       expect(Usuario.last.reputacion).to eq 0
     end
@@ -66,7 +65,6 @@ RSpec.describe "Auth", type: :request do
       expect(Usuario.find(usuario.id).imagen).to eq usuario_nuevo.imagen
       expect(Usuario.find(usuario.id).nombre_marca).to eq usuario_nuevo.nombre_marca
       expect(Usuario.find(usuario.id).logo_marca).to eq usuario_nuevo.logo_marca
-      expect(Usuario.find(usuario.id).direccion).to eq usuario_nuevo.direccion
       expect(Devise::Encryptor.compare(Usuario, Usuario.find(usuario.id).encrypted_password, usuario_nuevo.password)).to be true
     end
   end
