@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151217001914) do
+ActiveRecord::Schema.define(version: 20151217004939) do
 
   create_table "caracteristicas", force: :cascade do |t|
     t.string   "nombre",      null: false
@@ -49,15 +49,16 @@ ActiveRecord::Schema.define(version: 20151217001914) do
   add_index "imagenes", ["producto_id"], name: "index_imagenes_on_producto_id"
 
   create_table "pedidos", force: :cascade do |t|
-    t.string   "direccion",                    null: false
+    t.string   "direccion",                           null: false
     t.string   "comprobante_pago"
     t.string   "numero_guia"
-    t.decimal  "costo_total",                  null: false
+    t.decimal  "costo_total",                         null: false
     t.integer  "estado",           default: 0
     t.integer  "distribuidor_id"
     t.integer  "proveedor_id"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "ciudad",           default: "ciudad", null: false
   end
 
   add_index "pedidos", ["distribuidor_id"], name: "index_pedidos_on_distribuidor_id"

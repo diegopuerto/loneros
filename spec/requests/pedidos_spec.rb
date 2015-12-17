@@ -46,12 +46,14 @@ RSpec.describe "Pedidos", type: :request do
 				pedidos = body["pedidos"]
 
                 direcciones_pedidos = pedidos.map { |m| m["direccion"] }
+                ciudades_pedidos = pedidos.map { |m| m["ciudad"] }
                 comprobantes_pedidos = pedidos.map { |m| m["comprobante_pago"] }
                 guias_pedidos = pedidos.map { |m| m["numero_guia"] }
                 costos_pedidos = pedidos.map { |m| m["costo_total"] }
                 estados_pedidos = pedidos.map { |m| m["estado"] }
 
                 expect(direcciones_pedidos).to match_array([@pedido_uno.direccion, @pedido_dos.direccion])
+                expect(ciudades_pedidos).to match_array([@pedido_uno.ciudad, @pedido_dos.ciudad])
                 expect(comprobantes_pedidos).to match_array([@pedido_uno.comprobante_pago, @pedido_dos.comprobante_pago])
                 expect(guias_pedidos).to match_array([@pedido_uno.numero_guia, @pedido_dos.numero_guia])
                 expect(costos_pedidos).to match_array([@pedido_uno.costo_total, @pedido_dos.costo_total])
@@ -72,12 +74,14 @@ RSpec.describe "Pedidos", type: :request do
 				pedidos = body["pedidos"]
   
                 direcciones_pedidos = pedidos.map { |m| m["direccion"] }
+                ciudades_pedidos = pedidos.map { |m| m["ciudad"] }
                 comprobantes_pedidos = pedidos.map { |m| m["comprobante_pago"] }
                 guias_pedidos = pedidos.map { |m| m["numero_guia"] }
                 costos_pedidos = pedidos.map { |m| m["costo_total"] }
                 estados_pedidos = pedidos.map { |m| m["estado"] }
 
                 expect(direcciones_pedidos).to match_array([@pedido_uno.direccion, @pedido_dos.direccion, @pedido_tres.direccion])
+                expect(ciudades_pedidos).to match_array([@pedido_uno.ciudad, @pedido_dos.ciudad, @pedido_tres.ciudad])
                 expect(comprobantes_pedidos).to match_array([@pedido_uno.comprobante_pago, @pedido_dos.comprobante_pago, @pedido_tres.comprobante_pago])
                 expect(guias_pedidos).to match_array([@pedido_uno.numero_guia, @pedido_dos.numero_guia, @pedido_tres.numero_guia])
                 expect(costos_pedidos).to match_array([@pedido_uno.costo_total, @pedido_dos.costo_total, @pedido_tres.costo_total])
@@ -129,12 +133,14 @@ RSpec.describe "Pedidos", type: :request do
 
 				pedido = body["pedido"]
 				direccion_pedido = pedido["direccion"]
+				ciudad_pedido = pedido["ciudad"]
 				comprobante_pedido = pedido["comprobante_pago"]
 				guia_pedido = pedido["numero_guia"]
 				costo_pedido = pedido["costo_total"]
 				estado_pedido = pedido["estado"]
 
 				expect(direccion_pedido).to eq @pedido_uno.direccion.to_s
+				expect(ciudad_pedido).to eq @pedido_uno.ciudad
 				expect(comprobante_pedido).to eq @pedido_uno.comprobante_pago
 				expect(guia_pedido).to eq @pedido_uno.numero_guia
 				expect(costo_pedido).to eq @pedido_uno.costo_total
@@ -156,12 +162,14 @@ RSpec.describe "Pedidos", type: :request do
 
 				pedido = body["pedido"]
 				direccion_pedido = pedido["direccion"]
+				ciudad_pedido = pedido["ciudad"]
 				comprobante_pedido = pedido["comprobante_pago"]
 				guia_pedido = pedido["numero_guia"]
 				costo_pedido = pedido["costo_total"]
 				estado_pedido = pedido["estado"]
 
 				expect(direccion_pedido).to eq @pedido_uno.direccion.to_s
+				expect(ciudad_pedido).to eq @pedido_uno.ciudad
 				expect(comprobante_pedido).to eq @pedido_uno.comprobante_pago
 				expect(guia_pedido).to eq @pedido_uno.numero_guia
 				expect(costo_pedido).to eq @pedido_uno.costo_total
@@ -179,7 +187,7 @@ RSpec.describe "Pedidos", type: :request do
 			@producto_uno = FactoryGirl.create(:producto1, usuario_id: @usuario_uno.id)
 			@producto_dos = FactoryGirl.create(:producto2, usuario_id: @usuario_uno.id)
 			@producto_tres = FactoryGirl.create(:producto_tres, usuario_id: @usuario_uno.id)
-			@parametros_pedido = {direccion: "Carrera 10a #121-10 apt 101", comprobante_pago: "public_id", numero_guia: "1234567", costo_total: 54000, estado: "nuevo", proveedor_id: @usuario_uno.id, distribuidor_id: @usuario_dos.id, 
+			@parametros_pedido = {ciudad: "ciudad pedido", direccion: "Carrera 10a #121-10 apt 101", comprobante_pago: "public_id", numero_guia: "1234567", costo_total: 54000, estado: "nuevo", proveedor_id: @usuario_uno.id, distribuidor_id: @usuario_dos.id, 
       							  pedidos_productos_attributes: [{producto_id: @producto_uno.id, precio: 4000, cantidad: 10}, {producto_id: @producto_dos.id, precio: 9000, cantidad: 15}, {producto_id: @producto_tres.id, precio: 20000, cantidad: 20}]}.to_json
       	end
 
@@ -202,6 +210,7 @@ RSpec.describe "Pedidos", type: :request do
       			expect(response.status).to eq 201 # Created
       			expect(Pedido.first.productos.count).to eq 3
       			expect(Pedido.first.direccion).to eq "Carrera 10a #121-10 apt 101"
+      			expect(Pedido.first.ciudad).to eq "ciudad pedido"
       			expect(Pedido.first.comprobante_pago).to eq "public_id"
       			expect(Pedido.first.numero_guia).to eq "1234567"
       			expect(Pedido.first.costo_total).to eq 54000
@@ -227,6 +236,7 @@ RSpec.describe "Pedidos", type: :request do
       			expect(response.status).to eq 201 # Created
       			expect(Pedido.first.productos.count).to eq 3
       			expect(Pedido.first.direccion).to eq "Carrera 10a #121-10 apt 101"
+      			expect(Pedido.first.ciudad).to eq "ciudad pedido"
       			expect(Pedido.first.comprobante_pago).to eq "public_id"
       			expect(Pedido.first.numero_guia).to eq "1234567"
       			expect(Pedido.first.costo_total).to eq 54000
@@ -257,7 +267,7 @@ RSpec.describe "Pedidos", type: :request do
 			@pp = PedidoProducto.find_by(pedido_id: @pedido_uno.id, producto_id: @producto_uno.id)
 			@usuario_uno.pedidos_distribuidor << @pedido_uno
 
-			@parametros_pedido = {direccion: "Carrera 10a #121-10 apt 101", comprobante_pago: "public_id", numero_guia: "1234567", costo_total: 54000, estado: "nuevo", proveedor_id: @usuario_uno.id, distribuidor_id: @usuario_dos.id, 
+			@parametros_pedido = {ciudad: "ciudad pedido", direccion: "Carrera 10a #121-10 apt 101", comprobante_pago: "public_id", numero_guia: "1234567", costo_total: 54000, estado: "nuevo", proveedor_id: @usuario_uno.id, distribuidor_id: @usuario_dos.id, 
       							  pedidos_productos_attributes: [{producto_id: @producto_uno.id, precio: 4000, cantidad: 10, _destroy: 1, id: @pp.id}, {producto_id: @producto_dos.id, precio: 9000, cantidad: 15}, {producto_id: @producto_tres.id, precio: 20000, cantidad: 20}]}.to_json
       	end
 
@@ -293,6 +303,7 @@ RSpec.describe "Pedidos", type: :request do
       			expect(PedidoProducto.count).to eq 2
       			expect(Pedido.first.productos.count).to eq 2
       			expect(Pedido.first.direccion).to eq "Carrera 10a #121-10 apt 101"
+      			expect(Pedido.first.ciudad).to eq "ciudad pedido"
       			expect(Pedido.first.comprobante_pago).to eq "public_id"
       			expect(Pedido.first.numero_guia).to eq "1234567"
       			expect(Pedido.first.costo_total).to eq 54000
@@ -317,6 +328,7 @@ RSpec.describe "Pedidos", type: :request do
       			expect(PedidoProducto.count).to eq 2
       			expect(Pedido.first.productos.count).to eq 2
       			expect(Pedido.first.direccion).to eq "Carrera 10a #121-10 apt 101"
+      			expect(Pedido.first.ciudad).to eq "ciudad pedido"
       			expect(Pedido.first.comprobante_pago).to eq "public_id"
       			expect(Pedido.first.numero_guia).to eq "1234567"
       			expect(Pedido.first.costo_total).to eq 54000

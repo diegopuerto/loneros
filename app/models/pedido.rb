@@ -14,6 +14,7 @@ class Pedido < ActiveRecord::Base
 
   # Validaciones
   validates_presence_of :direccion
+  validates_presence_of :ciudad
   validates_presence_of :costo_total
   validates_presence_of :estado
   validates :direccion, length: { maximum: 100 }

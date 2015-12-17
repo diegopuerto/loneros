@@ -1,6 +1,7 @@
 class PedidoSerializer < ActiveModel::Serializer
   attributes :id,
   	:direccion,
+    :ciudad,
   	:comprobante_pago,
   	:numero_guia,
   	:estado,

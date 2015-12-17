@@ -53,6 +53,7 @@ private
 
 	def parametros_pedido_crear
     	params.permit(:direccion,
+                    :ciudad,
     	:comprobante_pago,
     	:numero_guia,
     	:costo_total,
@@ -67,6 +68,7 @@ private
 
 	def parametros_actualizar_pedido
 		params.permit(:direccion,
+                  :ciudad,
     	:comprobante_pago,
     	:numero_guia,
     	:costo_total,
