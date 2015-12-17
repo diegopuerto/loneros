@@ -7,7 +7,9 @@ class PedidoSerializer < ActiveModel::Serializer
   	:estado,
   	:distribuidor_id,
   	:proveedor_id,
-  	:costo_total
+  	:costo_total,
+    :created_at,
+    :updated_at
 	
 	#Asociaciones
 	has_many :productos
