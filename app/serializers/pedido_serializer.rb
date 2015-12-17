@@ -13,4 +13,6 @@ class PedidoSerializer < ActiveModel::Serializer
 	
 	#Asociaciones
 	has_many :productos
+  has_one :distribuidor, serializer: UsuarioSerializer
+  has_one :proveedor, serializer: UsuarioSerializer
 end
