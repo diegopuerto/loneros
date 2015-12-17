@@ -51,12 +51,14 @@ RSpec.describe "Usuarios", type: :request do
         reputaciones_usuario = usuarios.map { |m| m["reputacion"] }
         celulares_usuario = usuarios.map { |m| m["celular"] }
         imagenes_usuario = usuarios.map { |m| m["imagen"] }
+        marcas_usuario = usuarios.map { |m| m["nombre_marca"] }
 
         expect(nombres_usuario).to match_array([@admin.nombre, @usuario_uno.nombre, @usuario_dos.nombre])
         expect(emails_usuario).to match_array([@admin.email, @usuario_uno.email, @usuario_dos.email])
         expect(reputaciones_usuario).to match_array([@admin.reputacion, @usuario_uno.reputacion, @usuario_dos.reputacion])
         expect(celulares_usuario).to match_array([@admin.celular, @usuario_uno.celular, @usuario_dos.celular])
         expect(imagenes_usuario).to match_array([@admin.imagen, @usuario_uno.imagen, @usuario_dos.imagen])
+        expect(marcas_usuario).to match_array([@admin.nombre_marca, @usuario_uno.nombre_marca, @usuario_dos.nombre_marca])
       end
     end
   end
@@ -77,6 +79,7 @@ RSpec.describe "Usuarios", type: :request do
         expect(usuario["reputacion"]).to eq @usuario_uno.reputacion
         expect(usuario["celular"]).to eq @usuario_uno.celular
         expect(usuario["imagen"]).to eq @usuario_uno.imagen
+        expect(usuario["nombre_marca"]).to eq @usuario_uno.nombre_marca
       end
     end
 
@@ -97,6 +100,7 @@ RSpec.describe "Usuarios", type: :request do
         expect(usuario["reputacion"]).to eq @usuario_uno.reputacion
         expect(usuario["celular"]).to eq @usuario_uno.celular
         expect(usuario["imagen"]).to eq @usuario_uno.imagen
+        expect(usuario["nombre_marca"]).to eq @usuario_uno.nombre_marca
       end
     end
 
@@ -117,6 +121,7 @@ RSpec.describe "Usuarios", type: :request do
         expect(usuario["reputacion"]).to eq @usuario_uno.reputacion
         expect(usuario["celular"]).to eq @usuario_uno.celular
         expect(usuario["imagen"]).to eq @usuario_uno.imagen
+        expect(usuario["nombre_marca"]).to eq @usuario_uno.nombre_marca
       end
     end
   end
@@ -166,7 +171,7 @@ RSpec.describe "Usuarios", type: :request do
 
         post "/usuarios", parametros_usuario, @cabeceras_peticion
 
-         expect(response.status).to eq 401 # Created
+         expect(response.status).to eq 401 # Unauthorized
       end
     end
 
@@ -179,7 +184,7 @@ RSpec.describe "Usuarios", type: :request do
 
         post "/usuarios", parametros_usuario, @cabeceras_peticion
 
-        expect(response.status).to eq 401 # Created
+        expect(response.status).to eq 401 # Unauthorized
       end
     end
 
@@ -200,7 +205,6 @@ RSpec.describe "Usuarios", type: :request do
         expect(Usuario.last.celular).to eq usuario_valido.celular
         expect(Usuario.last.nombre_marca).to eq usuario_valido.nombre_marca
         expect(Usuario.last.logo_marca).to eq usuario_valido.logo_marca
-        expect(Usuario.last.direccion).to eq usuario_valido.direccion
 
       end
     end
@@ -249,7 +253,6 @@ RSpec.describe "Usuarios", type: :request do
         expect(Usuario.find(@usuario_uno.id).celular).to eq usuario_valido.celular
         expect(Usuario.find(@usuario_uno.id).nombre_marca).to eq usuario_valido.nombre_marca
         expect(Usuario.find(@usuario_uno.id).logo_marca).to eq usuario_valido.logo_marca
-        expect(Usuario.find(@usuario_uno.id).direccion).to eq usuario_valido.direccion
         # Este atributo no se puede editar
         expect(Usuario.find(@usuario_uno.id).reputacion).to eq @usuario_uno.reputacion
       end

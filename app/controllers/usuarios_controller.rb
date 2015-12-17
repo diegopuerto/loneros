@@ -54,7 +54,6 @@ class UsuariosController < ApplicationController
        :nombre,
        :nombre_marca,
        :logo_marca,
-       :direccion,
        :imagen,
        :celular)
     end
@@ -65,7 +64,6 @@ class UsuariosController < ApplicationController
     		:imagen,
         :nombre_marca,
         :logo_marca,
-        :direccion,
     		:celular)
     end
 

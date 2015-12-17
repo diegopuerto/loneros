@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151125162558) do
+ActiveRecord::Schema.define(version: 20151217001914) do
 
   create_table "caracteristicas", force: :cascade do |t|
     t.string   "nombre",      null: false
@@ -117,9 +117,8 @@ ActiveRecord::Schema.define(version: 20151125162558) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "admin",                  default: false,     null: false
-    t.string   "nombre_marca",           default: "loneros", null: false
+    t.string   "nombre_marca",           default: "loneros"
     t.string   "logo_marca"
-    t.string   "direccion",              default: "loneros", null: false
   end
 
   add_index "usuarios", ["email"], name: "index_usuarios_on_email"

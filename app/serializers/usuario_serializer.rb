@@ -4,5 +4,7 @@ class UsuarioSerializer < ActiveModel::Serializer
     :imagen,
     :reputacion,
     :celular,
-    :email
+    :email,
+    :nombre_marca,
+    :logo_marca
 end
