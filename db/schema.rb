@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151217004939) do
+ActiveRecord::Schema.define(version: 20160113143136) do
 
   create_table "caracteristicas", force: :cascade do |t|
     t.string   "nombre",      null: false
@@ -56,12 +56,14 @@ ActiveRecord::Schema.define(version: 20151217004939) do
     t.integer  "estado",           default: 0
     t.integer  "distribuidor_id"
     t.integer  "proveedor_id"
+    t.integer  "factura_id"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "ciudad",           default: "ciudad", null: false
   end
 
   add_index "pedidos", ["distribuidor_id"], name: "index_pedidos_on_distribuidor_id"
+  add_index "pedidos", ["factura_id"], name: "index_pedidos_on_factura_id"
   add_index "pedidos", ["proveedor_id"], name: "index_pedidos_on_proveedor_id"
 
   create_table "pedidos_productos", force: :cascade do |t|
@@ -98,28 +100,29 @@ ActiveRecord::Schema.define(version: 20151217004939) do
   add_index "productos", ["usuario_id"], name: "index_productos_on_usuario_id"
 
   create_table "usuarios", force: :cascade do |t|
-    t.string   "provider",                                   null: false
-    t.string   "uid",                    default: "",        null: false
-    t.string   "encrypted_password",     default: "",        null: false
+    t.string   "provider",                               null: false
+    t.string   "uid",                    default: "",    null: false
+    t.string   "encrypted_password",     default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,         null: false
+    t.integer  "sign_in_count",          default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.string   "nombre",                                     null: false
+    t.string   "nombre",                                 null: false
     t.string   "imagen"
-    t.string   "email",                                      null: false
-    t.string   "celular",                                    null: false
+    t.string   "email",                                  null: false
+    t.string   "celular",                                null: false
     t.integer  "reputacion",             default: 0
     t.text     "tokens"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "admin",                  default: false,     null: false
-    t.string   "nombre_marca",           default: "loneros"
+    t.boolean  "admin",                  default: false, null: false
+    t.string   "nombre_marca"
     t.string   "logo_marca"
+    t.text     "info_pago"
   end
 
   add_index "usuarios", ["email"], name: "index_usuarios_on_email"
